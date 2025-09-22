@@ -60,6 +60,8 @@
 
 
     initContent = ''
+      stty -ixon  # Disable flow control for e.g. Ctrl+S
+
       # jk to leave Insert
       bindkey -M viins 'jk' vi-cmd-mode
 

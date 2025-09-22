@@ -50,10 +50,39 @@ in
         #group = "highlight-yank";
         callback.__raw = "function() vim.hl.on_yank() end";
       }
+
+      # Create dirs automatically b4 save
+      #{
+      #  event = [ "BufWritePre" ];
+      #  pattern = [ "*" ];
+      #  command = ''
+      #    lua <<'LUA'
+      #    local dir = vim.fn.expand("%:p:h")
+      #    if dir ~= "" and vim.fn.isdirectory(dir) == 0 then
+      #      vim.fn.mkdir(dir, "p")
+      #    end
+      #    LUA
+      #  '';
+      #}
     ];
 
     # Keymaps
     keymaps = [
+      # Normal: Ctrl-S saves (silent, only if changed with :update)
+      { mode = "n"; key = "<C-s>"; action = ":update<CR>"; options.silent = true; }
+
+      # Insert: Ctrl-S saves and stays in Insert
+      { mode = "i"; key = "<C-s>"; action = "<C-o>:update<CR>"; options.silent = true; }
+
+      # Visual/Select: Ctrl-S saves
+      { mode = "v"; key = "<C-s>"; action = "<C-c>:update<CR>"; options.silent = true; }
+      { mode = "x"; key = "<C-s>"; action = "<C-c>:update<CR>"; options.silent = true; }
+      { mode = "s"; key = "<C-s>"; action = "<C-c>:update<CR>"; options.silent = true; }
+
+      # Leader save bindings
+      { mode = "n"; key = "<leader>w"; action = ":update<CR>"; options.silent = true; }
+      { mode = "n"; key = "<leader>W"; action = ":wall<CR>";  options.silent = true; }
+
       { mode = [ "n" "v" ]; key = "<Space>"; action = "<Nop>"; options.silent = true; }
       { mode = "n"; key = "<Esc>"; action = "<cmd>nohlsearch<CR>"; options.desc = "Clear search highlight"; }
       { mode = "t"; key = "<Esc><Esc>"; action = "<C-\\\\><C-n>"; options.desc = "Exit terminal"; }
