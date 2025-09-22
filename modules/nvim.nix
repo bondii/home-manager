@@ -10,6 +10,7 @@ in
 
   programs.nixvim = {
     enable = true;
+    defaultEditor = true;
 
     #enableLuaLoader = true;
 

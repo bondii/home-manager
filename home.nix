@@ -19,8 +19,7 @@
   home.sessionVariables = {
     # Make .desktop/icons from Nix findable
     XDG_DATA_DIRS = "${config.home.homeDirectory}/.nix-profile/share:/usr/local/share:/usr/share";
-    EDITOR = "nvim";
-    VISUAL = "nvim";
+    SUDO_EDITOR = "${config.home.homeDirectory}/.nix-profile/bin/nvim";
   };
 
   imports = [
