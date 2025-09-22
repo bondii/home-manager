@@ -4,6 +4,10 @@ let
   haveNerd = true;
 in
 {
+  imports = [
+    ./vim-shared.nix
+  ];
+
   programs.nixvim = {
     enable = true;
 
@@ -11,6 +15,7 @@ in
 
     # Bas
     globals = { mapleader = " "; have_nerd_font = haveNerd; };
+    # List all options by  :h option-list
     opts = {
       number = true;
       relativenumber = true;
@@ -55,7 +60,7 @@ in
       { mode = "n"; key = "<C-l>"; action = "<C-w><C-l>"; options.desc = "Win right"; }
       { mode = "n"; key = "<C-j>"; action = "<C-w><C-j>"; options.desc = "Win down"; }
       { mode = "n"; key = "<C-k>"; action = "<C-w><C-k>"; options.desc = "Win up"; }
-      { mode = "i"; key = "jk"; action = "<Esc>"; options.silent = true; }
+      #{ mode = "i"; key = "jk"; action = "<Esc>"; options.silent = true; }
 
       # Telescope binds
       { mode = "n"; key = "<leader>sh"; action.__raw = "require('telescope.builtin').help_tags"; options.desc = "[S]earch [H]elp"; }
@@ -198,6 +203,8 @@ in
         };
       };
     };
+
+    extraConfigVim = "source ${config.xdg.configHome}/vim/shared-maps.vim";
 
     # nvim-lint-mappning + auto-run
     extraConfigLua = ''

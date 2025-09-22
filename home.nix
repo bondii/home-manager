@@ -305,6 +305,16 @@
     vimdiff = "nvim -d";
   };
 
+  # Shared VSCode / Cursor settings
+  xdg.configFile."Cursor/User/settings.json".text = builtins.toJSON {
+    "vscode-neovim.neovimExecutablePaths.linux" = "${config.home.homeDirectory}/.nix-profile/bin/nvim";
+    "vscode-neovim.neovimInitPath" = "${config.xdg.configHome}/nvim/init.lua";
+    "vscode-neovim.useCtrlKeys" = true;
+  };
+  xdg.configFile."Cursor/User/keybindings.json".text = builtins.toJSON [
+    { key = "ctrl+b"; command = "workbench.action.toggleSidebarVisibility"; when = "editorTextFocus"; }
+  ];
+
   # Exempel på egen systemd-user service med Home Manager (om du hellre vill köra applets som tjänster):
   # systemd.user.services."clipman" = {
   #   Unit = { Description = "Xfce4 Clipman"; After = [ "graphical-session.target" ]; };
