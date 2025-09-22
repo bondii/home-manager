@@ -11,6 +11,10 @@
   home.homeDirectory = "/home/pontus";
   home.stateVersion = "25.05";
 
+  home.activation.createNvimUndoDir = lib.mkAfter ''
+    mkdir -p "${config.xdg.cacheHome}/nvim/undo"
+  '';
+
   programs.home-manager.enable = true;
   xdg.enable = true;
   fonts.fontconfig.enable = true;

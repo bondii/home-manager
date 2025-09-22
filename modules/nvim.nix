@@ -98,6 +98,9 @@ in
         action.__raw = ''function() require("conform").format({ async = true, lsp_format = "fallback" }) end'';
         options.desc = "[F]ormat buffer";
       }
+
+      { mode = "n"; key = "<leader>u>"; action = "<cmd>UndotreeToggle<CR>"; options.desc = "Undo tree"; }
+      #{ mode = "n"; key = "<leader>u>"; action = "<cmd>Telescope undo<CR>"; options.desc = "Undo tree"; }
     ];
 
     # Tema
@@ -155,6 +158,8 @@ in
       lint.enable = true;
       dap.enable = true;
 
+      undotree.enable = true;
+
       # Completion: blink.cmp
         #"blink-cmp" = {
         #  enable = true;
@@ -205,6 +210,8 @@ in
       };
     };
 
+    #extraPlugins = [ pkgs.vimPlugins.vimplugin-telescope-undo-nvim ];
+
     extraConfigVim = "source ${config.xdg.configHome}/vim/shared-maps.vim";
 
     # nvim-lint-mappning + auto-run
@@ -224,13 +231,16 @@ in
         go         = { "golangci_lint" },
         markdown   = { "markdownlint" },
       }
+
       vim.api.nvim_create_autocmd({ "BufWritePost", "BufReadPost", "InsertLeave" }, {
         callback = function() require("lint").try_lint() end,
       })
+
+      vim.opt.undodir = vim.fn.stdpath("cache") .. "/undo"
+      --require("telescope").load_extension("undo")
     '';
   };
 
-  # språkservrar/verktyg via Nix
   home.packages = with pkgs; [
     ripgrep fd git gcc nodejs
     lua-language-server rust-analyzer gopls
