@@ -20,31 +20,54 @@
     # Make .desktop/icons from Nix findable
     XDG_DATA_DIRS = "${config.home.homeDirectory}/.nix-profile/share:/usr/local/share:/usr/share";
     EDITOR = "nvim";
+    VISUAL = "nvim";
   };
 
   imports = [
     ./modules/nvim.nix
   ];
 
-  # ZSH + oh-my-zsh (+ autosuggest + syntax highlighting) och Starship
+  # ZSH (+ autosuggest + syntax highlighting) and Starship
   programs.zsh = {
     enable = true;
+
     enableCompletion = true;
+    completionInit = ''
+      autoload -Uz compinit
+
+      zstyle ':completion:*' completer _expand _complete _ignored _correct
+      zstyle ':completion:*' matcher-list 'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' 'm:{[:lower:]}={[:upper:]}' 'r:|[._-/]=** r:|=** l:|=*'
+      zstyle ':completion:*' max-errors 2
+
+      compinit
+    '';
+
+    history = {
+      path = "${config.home.homeDirectory}/.histfile";   # HISTFILE
+      size = 10000;                                      # HISTSIZE
+      save = 10000;                                      # SAVEHIST
+      share = true;
+    };
+
+    defaultKeymap = "viins";
+    localVariables.KEYTIMEOUT = "15";
+
     autosuggestion.enable = true;
     syntaxHighlighting.enable = true;
 
-    oh-my-zsh = {
-      enable = true;
-      theme = "robbyrussell";
-      plugins = [ "git" "sudo" "docker" "fzf" ];
-    };
 
     initContent = ''
-      # Optional: wrapper for GL-apps from Nix
-      #alias glkitty="DOLLAR {lib.getExe nixGL}/bin/nixGL ${lib.getExe pkgs.kitty}"
-      #alias glimv="DOLLAR {lib.getExe nixGL}/bin/nixGL ${lib.getExe pkgs.imv}"
-      alias nv="nvim"
+      # jk to leave Insert
+      bindkey -M viins 'jk' vi-cmd-mode
+
+      # Autosuggestions: Accept with Ctrl+Space
+      bindkey '^ ' autosuggest-accept
     '';
+  };
+
+  programs.fzf = {
+    enable = true;
+    enableZshIntegration = true;
   };
 
   programs.starship = {
@@ -81,7 +104,7 @@
       modi = "drun,run,ssh";
       show-icons = true;
     };
-  }; # :contentReference[oaicite:8]{index=8}
+  };
 
   # Dunst (notifieringar)
   services.dunst = {
@@ -148,15 +171,25 @@
         settings = {
           theme = { theme = "gruvbox-dark"; };
           icons = { icons = "material-nf"; };
+
+          trayOutput = "primary";
+          trayPadding = 4;
         };
 
         blocks = [
-          { block = "cpu"; }
-          { block = "memory"; }
-          { block = "battery"; }
-          { block = "net"; }
+          { block = "cpu"; interval = 1; }
+          { block = "memory"; format = " $icon $mem_used_percents "; format_alt = " $icon $swap_used_percents "; }
+          {
+            block = "battery";
+            format = " $icon $percentage ";  # $icon comes from material-nf
+            charging_format = " $icon $percentage ";
+            full_format = " $icon 100% ";
+            #hide_missing = true;
+          }
+
+          #{ block = "net"; }
           { block = "sound"; }
-          { block = "time"; interval = 60; format = "%a %d %H:%M"; }
+          { block = "time"; interval = 60; format = " $timestamp.datetime(f:'%d/%m %R') "; }
         ];
       };
     };
@@ -221,14 +254,13 @@
         { command = "nm-applet"; always = true; notification = false; }
         { command = "blueman-applet"; always = true; notification = false; }
         { command = "xfce4-clipman"; always = true; notification = false; } # Clipman (X11); starta tray-varianten
-        { command = "feh --no-fehbg --bg-fill $HOME/Pictures/wallpapers/default.jpg"; always = true; }
+        { command = "feh --no-fehbg --bg-fill $HOME/pictures/wallpapers/default.jpg"; always = true; }
 	{ command = "setxkbmap -layout se,us -option grp:caps_toggle"; always = true; notification = false; }
       ];
 
       # Några standardbinds
       keybindings = lib.mkOptionDefault {
-        "Mod4+Return" = "exec --no-startup-id ${pkgs.nixgl.nixGLMesa}/bin/nixGLMesa ${pkgs.kitty}/bin/kitty";
-        #"Mod4+Return" = "exec --no-startup-id ${pkgs.kitty}/bin/kitty";
+        "Mod4+Return" = "exec --no-startup-id kitty-gl";
         "Mod4+Shift+Return" = "exec --no-startup-id ${pkgs.xterm}/bin/xterm";
         "Mod4+d"      = "exec rofi -show drun";
         "Mod4+Shift+e"= "exec i3-msg exit";
@@ -240,22 +272,14 @@
       };
     };
 
-    extraConfig = ''
-      bar {
-        font pango:JetBrainsMono Nerd Font 11
-      }
-    '';
   }; # :contentReference[oaicite:12]{index=12}
 
   # Paket som installeras användarlokalt via Nix
   home.packages = with pkgs; [
     # NixGL wrappers
-    (pkgs.writeShellScriptBin "kitty-gl" ''
-      exec ${pkgs.nixgl.nixGLMesa}/bin/nixGLMesa ${pkgs.kitty}/bin/kitty "$@"
-    '')
-    (pkgs.writeShellScriptBin "imv-gl" ''
-      exec ${pkgs.nixgl.nixGLMesa}/bin/nixGLMesa ${pkgs.imv}/bin/imv "$@"
-    '')
+	  (writeShellScriptBin "gl-wrap" ''exec ${nixgl.nixGLMesa}/bin/nixGLMesa "$@"'')
+	  (writeShellScriptBin "kitty-gl" ''exec gl-wrap ${kitty}/bin/kitty "$@"'')
+	  (writeShellScriptBin "imv-gl"   ''exec gl-wrap ${imv}/bin/imv "$@"'')
 
     xterm
     brightnessctl
