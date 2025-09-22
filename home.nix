@@ -16,7 +16,6 @@
   fonts.fontconfig.enable = true;
 
   home.sessionPath = [ "${config.home.homeDirectory}/.nix-profile/bin" ];
-
   home.sessionVariables = {
     # Make .desktop/icons from Nix findable
     XDG_DATA_DIRS = "${config.home.homeDirectory}/.nix-profile/share:/usr/local/share:/usr/share";
@@ -25,7 +24,6 @@
 
   imports = [
     ./modules/nvim.nix
-    ./modules/nixvim-kickstart.nix
   ];
 
   # ZSH + oh-my-zsh (+ autosuggest + syntax highlighting) och Starship
@@ -41,10 +39,11 @@
       plugins = [ "git" "sudo" "docker" "fzf" ];
     };
 
-    initExtra = ''
+    initContent = ''
       # Optional: wrapper for GL-apps from Nix
       #alias glkitty="DOLLAR {lib.getExe nixGL}/bin/nixGL ${lib.getExe pkgs.kitty}"
       #alias glimv="DOLLAR {lib.getExe nixGL}/bin/nixGL ${lib.getExe pkgs.imv}"
+      alias nv="nvim"
     '';
   };
 
@@ -75,7 +74,8 @@
   # Rofi
   programs.rofi = {
     enable = true;
-    terminal = "${pkgs.nixgl.nixGLMesa}/bin/nixGLMesa ${pkgs.kitty}/bin/kitty";
+    #terminal = "${pkgs.nixgl.nixGLMesa}/bin/nixGLMesa ${pkgs.kitty}/bin/kitty";
+    terminal = "kitty-gl";
     theme = "Arc-Dark";
     extraConfig = {
       modi = "drun,run,ssh";
@@ -145,8 +145,10 @@
 
     bars = {
       default = {
-	icons = "material-nf";
-	theme = "gruvbox-dark";
+        settings = {
+          theme = { theme = "gruvbox-dark"; };
+          icons = { icons = "material-nf"; };
+        };
 
         blocks = [
           { block = "cpu"; }
@@ -154,9 +156,8 @@
           { block = "battery"; }
           { block = "net"; }
           { block = "sound"; }
-          { block = "time"; interval = 1; format = "%a %Y-%m-%d %H:%M"; }
+          { block = "time"; interval = 60; format = "%a %d %H:%M"; }
         ];
-        settings = { theme = "gruvbox-dark"; icons = "material-nf"; };
       };
     };
   }; # HM skapar toml under ~/.config/i3status-rust; i3 måste peka dit. :contentReference[oaicite:11]{index=11}
@@ -165,39 +166,39 @@
   #  enable = true;
   #  package = config.programs.nixvim.build.package;
   #  defaultEditor = true;
-  #  viAlias = true;
-  #  vimAlias = true;
+  #  viAlias = false;
+  #  vimAlias = false;
   #};
 
-  programs.nixvim = {
-    plugins.lint.enable = true;  # nvim-lint
+  #programs.nixvim = {
+  #  plugins.lint.enable = true;  # nvim-lint
 
-    # Konfigurera vilka linters som ska köras när (rent Lua via Nix)
-    extraConfigLua = ''
-      local lint = require("lint")
-      lint.linters_by_ft = {
-        javascript = { "eslint_d" },
-        typescript = { "eslint_d" },
-        tsx        = { "eslint_d" },
-        jsx        = { "eslint_d" },
-        lua        = { "luacheck" },
-        python     = { "ruff" },
-        nix        = { "deadnix" },
-        sh         = { "shellcheck" },
-        bash       = { "shellcheck" },
-        zsh        = { "shellcheck" },
-        go         = { "golangci_lint" },
-        markdown   = { "markdownlint" },
-        -- ['*'] = { 'typos' },      -- global linter exempel
-        -- ['_'] = { 'fallback' },   -- fallback-filtyp
-      }
+  #  # Konfigurera vilka linters som ska köras när (rent Lua via Nix)
+  #  extraConfigLua = ''
+  #    local lint = require("lint")
+  #    lint.linters_by_ft = {
+  #      javascript = { "eslint_d" },
+  #      typescript = { "eslint_d" },
+  #      tsx        = { "eslint_d" },
+  #      jsx        = { "eslint_d" },
+  #      lua        = { "luacheck" },
+  #      python     = { "ruff" },
+  #      nix        = { "deadnix" },
+  #      sh         = { "shellcheck" },
+  #      bash       = { "shellcheck" },
+  #      zsh        = { "shellcheck" },
+  #      go         = { "golangci_lint" },
+  #      markdown   = { "markdownlint" },
+  #      -- ['*'] = { 'typos' },      -- global linter exempel
+  #      -- ['_'] = { 'fallback' },   -- fallback-filtyp
+  #    }
 
-      -- Kör linters automatiskt vid vettiga events
-      vim.api.nvim_create_autocmd({ "BufWritePost", "BufReadPost", "InsertLeave" }, {
-        callback = function() require("lint").try_lint() end,
-      })
-    '';
-  };
+  #    -- Kör linters automatiskt vid vettiga events
+  #    vim.api.nvim_create_autocmd({ "BufWritePost", "BufReadPost", "InsertLeave" }, {
+  #      callback = function() require("lint").try_lint() end,
+  #    })
+  #  '';
+  #};
 
 
   xsession.enable = true;
@@ -205,17 +206,17 @@
     enable = true;
     package = pkgs.i3-gaps;
     config = {
-      modifier = "Mod4";
-      terminal = "${pkgs.kitty}/bin/kitty";
+      modifier = "Mod1";
+      #terminal = "${pkgs.kitty}/bin/kitty";
+      terminal = "kitty-gl";
       fonts = { names = [ "JetBrainsMono Nerd Font" ]; size = 10.0; };
 
       # i3bar -> i3status-rs konfig som HM genererar
       bars = [{
-        statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs ${config.xdg.configHome}/i3status-rust/config-default.toml";
         position = "bottom";
+        statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs ${config.xdg.configHome}/i3status-rust/config-default.toml";
       }];
 
-      # Autostart som tidigare låg i i3-konfig
       startup = [
         { command = "nm-applet"; always = true; notification = false; }
         { command = "blueman-applet"; always = true; notification = false; }
@@ -247,10 +248,18 @@
   }; # :contentReference[oaicite:12]{index=12}
 
   # Paket som installeras användarlokalt via Nix
-  home.packages = (with pkgs; [
+  home.packages = with pkgs; [
+    # NixGL wrappers
+    (pkgs.writeShellScriptBin "kitty-gl" ''
+      exec ${pkgs.nixgl.nixGLMesa}/bin/nixGLMesa ${pkgs.kitty}/bin/kitty "$@"
+    '')
+    (pkgs.writeShellScriptBin "imv-gl" ''
+      exec ${pkgs.nixgl.nixGLMesa}/bin/nixGLMesa ${pkgs.imv}/bin/imv "$@"
+    '')
+
     xterm
-    nixgl.nixGLMesa
     brightnessctl
+    nixgl.nixGLMesa
 
     # UI/verktyg
     feh imv zathura blueman networkmanagerapplet libnotify xss-lock
@@ -286,7 +295,7 @@
     markdownlint-cli
 
     lua54Packages.luacheck
-  ]) ++ [
+
     config.programs.nixvim.build.package
   ];
 
