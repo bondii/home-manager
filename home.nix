@@ -204,9 +204,9 @@ in
     settings = {
       redshift = {
         temp-day         = lib.mkForce 6500;
-        temp-night       = lib.mkForce 1000;
+        temp-night       = lib.mkForce 2000;
         brightness-day   = lib.mkForce 1.0;
-        brightness-night = lib.mkForce 0.1;
+        brightness-night = lib.mkForce 0.9;
         transition       = 1;
         #adjustment-method = randr;
         
