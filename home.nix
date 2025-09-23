@@ -112,13 +112,14 @@ in
       enable_audio_bell = "no";
       scrollback_lines = 10000;
       term = "xterm-kitty";
+      background_opacity = "0.9";
+      dynamic_background_opacity = "yes";
     };
   };
 
   # Rofi
   programs.rofi = {
     enable = true;
-    #terminal = "${pkgs.nixgl.nixGLMesa}/bin/nixGLMesa ${pkgs.kitty}/bin/kitty";
     terminal = "kitty-gl";
     theme = "Arc-Dark";
     extraConfig = {
@@ -150,13 +151,44 @@ in
     enable = true;
     settings = {
       backend = "glx";
+      #backend = "xrender";
       vsync = true;
       detect-client-leader = true;
+
+      opacity-rule = [
+        "100:class_g = 'i3lock'"
+        "100:class_g = 'XSecureLock'"
+      ];
+
       detect-rounded-corners = true;
       corner-radius = 8;
+      round-borders = 1;
+      rounded-corners-exclude = [
+        "window_type = 'dock'"         # i3bar/polybar
+        "window_type = 'desktop'"
+        "class_g = 'Rofi'"
+        "class_g = 'rofi'"
+        "class_g = 'mpv'"
+        "class_g = 'feh'"
+        "name = 'Picture-in-Picture'"
+      ];
+
       shadow = true;
+      shadow-radius = 16;
+      shadow-opacity = 0.30;
+      frame-opacity = 0.90;
+      inactive-opacity = 0.9;
+      wintypes = {
+        dock = { shadow = false; };
+        dnd = { shadow = false; };
+        tooltip = { shadow = false; };
+        menu = { shadow = false; };
+        dropdown_menu = { shadow = false; };
+        popup_menu = { shadow = false; };
+      };
     };
-  }; # (undviker kända autostart-konflikter). :contentReference[oaicite:9]{index=9}
+  };
+  systemd.user.services.picom.Service.ExecStart = lib.mkForce "${pkgs.nixgl.nixGLMesa}/bin/nixGLMesa ${pkgs.picom}/bin/picom --config ${config.xdg.configHome}/picom/picom.conf";
 
   # i3lock via xss-lock
   services.screen-locker = {
@@ -277,39 +309,48 @@ in
 
       floating.modifier = "Mod1";
 
-      # i3bar -> i3status-rs konfig som HM genererar
+      # i3bar -> i3status-rs config by HM
       bars = [{
         position = "bottom";
         statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs ${config.xdg.configHome}/i3status-rust/config-default.toml";
       }];
 
       startup = [
+        #{ command = "dex --autostart --environment i3"; always = false; notification = false; }
         { command = "nm-applet"; always = true; notification = false; }
         { command = "blueman-applet"; always = true; notification = false; }
-        { command = "xfce4-clipman"; always = true; notification = false; } # Clipman (X11); starta tray-varianten
+        { command = "xfce4-clipman"; always = true; notification = false; } # Clipman; start tray variant
         { command = "feh --no-fehbg --bg-fill $HOME/pictures/wallpapers/default.jpg"; always = true; }
         { command = "setxkbmap -layout se,us -option grp:caps_toggle"; always = true; notification = false; }
 
-        { command = ''i3-msg 'rename workspace "9" to "9: "' '';  always = false; }
-        { command = ''i3-msg 'rename workspace "10" to "10: "' ''; always = false; }
+        { command = ''i3-msg 'rename workspace "9" to ""' '';  always = false; }
+        { command = ''i3-msg 'rename workspace "10" to ""' ''; always = false; }
       ];
 
       workspaceAutoBackAndForth = true;
 
       gaps = {
-        inner = 10;
+        inner = 5;
         outer = -2;
         smartGaps = true;
         smartBorders = "on";
       };
 
       colors = {
-        focused          = { border="#556064"; background="#556064"; text="#80FFF9"; indicator="#FDF6E3"; childBorder="#FDF6E3"; };
-        focusedInactive  = { border="#2F3D44"; background="#2F3D44"; text="#1ABC9C"; indicator="#454948"; childBorder="#454948"; };
-        unfocused        = { border="#2F3D44"; background="#2F3D44"; text="#1ABC9C"; indicator="#454948"; childBorder="#454948"; };
-        urgent           = { border="#CB4B16"; background="#FDF6E3"; text="#1ABC9C"; indicator="#268BD2"; childBorder="#268BD2"; };
-        placeholder      = { border="#000000"; background="#0c0c0c"; text="#ffffff"; indicator="#000000"; childBorder="#000000"; };
-        background = "#2B2C2B";
+        focused = {
+          border      = "#90648B";
+          background  = "#660066";  # Don't use titles bro...
+          text        = "#80FFF9";
+          indicator   = "#90648B";
+          childBorder = "#90648B";
+        };
+        urgent = {
+          border      = "#D94F70";
+          background  = "#D94F70";
+          text        = "#80FFF9";
+          indicator   = "#CB4B16";
+          childBorder = "#CB4B16";
+        };
       };
 
       assigns = {
@@ -388,9 +429,9 @@ in
     };
 
     extraConfig = ''
-      default_border pixel 1
+      default_border pixel 2
       default_floating_border normal
-      # Dra tiling-fönster genom titelraden när du håller $mod (i3 >= 4.22)
+      # Move tiling window when holding $mod
       tiling_drag modifier
 
       mode "resize" {
