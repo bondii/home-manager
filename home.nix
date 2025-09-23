@@ -1,11 +1,27 @@
 { config, pkgs, lib, ... }:
 
-#let
-#  # NixGL (valfritt men bra på Arch för GL-appar byggda via Nix)
-#  nixGL = pkgs.callPackage (pkgs.fetchFromGitHub {
-#    owner = "guibou"; repo = "nixGL"; rev = "master"; sha256 = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"; # byt till rätt hash vid behov
-#  }) {};
-#in
+let
+  wrap = name: bin: pkgs.writeShellScriptBin name ''
+    exec ${pkgs.nixgl.nixGLMesa}/bin/nixGLMesa ${bin} "$@"
+  '';
+
+  lockPixel = pkgs.writeShellScriptBin "lock-pixel" ''
+    set -euo pipefail
+    down=8  # How much to downscale for pixelation
+    up=$((10000 / down))
+    tmpbg="$(mktemp -p /run/user/$UID --suffix=.png)"
+
+    #${pkgs.maim}/bin/maim -u | ${pkgs.imagemagick}/bin/magick - -blur 0x12 "$tmpbg"
+    #${pkgs.maim}/bin/maim -u | ${pkgs.imagemagick}/bin/magick convert - -resize 10% -resize 1000% "$tmpbg"
+    #-samle OR -filter point -resize
+    ${pkgs.maim}/bin/maim -u | ${pkgs.imagemagick}/bin/magick convert - -sample "$down%" -sample "$up%" PNG24:"$tmpbg"
+
+
+    /usr/bin/i3lock -n -i "$tmpbg"
+
+    rm -f "$tmpbg"
+  '';
+in
 {
   home.username = "pontus";
   home.homeDirectory = "/home/pontus";
@@ -142,13 +158,14 @@
     };
   }; # (undviker kända autostart-konflikter). :contentReference[oaicite:9]{index=9}
 
-  # Skärmlås: i3lock-color via xss-lock
+  # i3lock via xss-lock
   services.screen-locker = {
     enable = true;
-    lockCmd = "${pkgs.i3lock-color}/bin/i3lock-color -n --blur 5 --clock";
-    inactiveInterval = 10; # minuter
+    #lockCmd = "${pkgs.i3lock}/bin/i3lock -n -c 000000";
+    lockCmd = "${lockPixel}/bin/lock-pixel";
+    inactiveInterval = 10;  # Minutes
     xss-lock.extraOptions = [ "--transfer-sleep-lock" ];
-  }; # :contentReference[oaicite:10]{index=10}
+  };
 
   services.redshift = {
     enable = true;
@@ -307,7 +324,8 @@
         "${M}+Shift+c" = "reload";
         "${M}+Shift+r" = "restart";
         "${M}+Shift+e" = ''exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"'';
-        "${M}+x" = "exec ${pkgs.i3lock-color}/bin/i3lock-color -n --blur 5 --clock";
+        #"${M}+x" = "exec /usr/bin/i3lock -n -c 000000";
+        "${M}+x" = "exec ${lockPixel}/bin/lock-pixel";
 
         # Focus
         "${M}+h" = "focus left";  "${M}+j" = "focus down";  "${M}+k" = "focus up";  "${M}+l" = "focus right";
@@ -397,13 +415,17 @@
   # Paket som installeras användarlokalt via Nix
   home.packages = with pkgs; [
     # NixGL wrappers
-	  (writeShellScriptBin "gl-wrap" ''exec ${nixgl.nixGLMesa}/bin/nixGLMesa "$@"'')
-	  (writeShellScriptBin "kitty-gl" ''exec gl-wrap ${kitty}/bin/kitty "$@"'')
-	  (writeShellScriptBin "imv-gl"   ''exec gl-wrap ${imv}/bin/imv "$@"'')
+    (wrap "kitty-gl"   "${pkgs.kitty}/bin/kitty")
+    (wrap "imv-gl"     "${pkgs.imv}/bin/imv")
+    (wrap "picom-gl"   "${pkgs.picom}/bin/picom")
+    pkgs.nixgl.nixGLMesa
+
+    maim
+    imagemagick
+    lockPixel
 
     xterm
     brightnessctl
-    nixgl.nixGLMesa
 
     # UI/verktyg
     feh imv zathura blueman networkmanagerapplet libnotify xss-lock
