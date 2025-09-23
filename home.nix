@@ -247,46 +247,7 @@ in
         ];
       };
     };
-  }; # HM skapar toml under ~/.config/i3status-rust; i3 måste peka dit. :contentReference[oaicite:11]{index=11}
-
-  #programs.neovim = {
-  #  enable = true;
-  #  package = config.programs.nixvim.build.package;
-  #  defaultEditor = true;
-  #  viAlias = false;
-  #  vimAlias = false;
-  #};
-
-  #programs.nixvim = {
-  #  plugins.lint.enable = true;  # nvim-lint
-
-  #  # Konfigurera vilka linters som ska köras när (rent Lua via Nix)
-  #  extraConfigLua = ''
-  #    local lint = require("lint")
-  #    lint.linters_by_ft = {
-  #      javascript = { "eslint_d" },
-  #      typescript = { "eslint_d" },
-  #      tsx        = { "eslint_d" },
-  #      jsx        = { "eslint_d" },
-  #      lua        = { "luacheck" },
-  #      python     = { "ruff" },
-  #      nix        = { "deadnix" },
-  #      sh         = { "shellcheck" },
-  #      bash       = { "shellcheck" },
-  #      zsh        = { "shellcheck" },
-  #      go         = { "golangci_lint" },
-  #      markdown   = { "markdownlint" },
-  #      -- ['*'] = { 'typos' },      -- global linter exempel
-  #      -- ['_'] = { 'fallback' },   -- fallback-filtyp
-  #    }
-
-  #    -- Kör linters automatiskt vid vettiga events
-  #    vim.api.nvim_create_autocmd({ "BufWritePost", "BufReadPost", "InsertLeave" }, {
-  #      callback = function() require("lint").try_lint() end,
-  #    })
-  #  '';
-  #};
-
+  };
 
   xsession.enable = true;
   xsession.windowManager.i3 = {
@@ -503,13 +464,12 @@ in
 
     lua54Packages.luacheck
 
-    config.programs.nixvim.build.package
   ];
 
   programs.zsh.shellAliases = {
     nv = "nvim";
     vim = "nvim";
-    vimdiff = "nvim -d";
+    vdiff = "nvim -d";
   };
 
   # Shared VSCode / Cursor settings
@@ -517,6 +477,15 @@ in
     "vscode-neovim.neovimExecutablePaths.linux" = "${config.home.homeDirectory}/.nix-profile/bin/nvim";
     "vscode-neovim.neovimInitPath" = "${config.xdg.configHome}/nvim/init.lua";
     "vscode-neovim.useCtrlKeys" = true;
+
+    "editor.bracketPairColorization.enabled" = true;
+    "editor.renderWhitespace" = "trailing";
+    "editor.comments.insertSpace" = false;
+    "files.autoSave" = "onFocusChange";
+    "editor.formatOnSave" = true;
+    "editor.minimap.enabled" = false;
+    "typescript.updateImportsOnFileMove.enabled" = "always";
+    "editor.rulers" = [ 80 100 ];
   };
   xdg.configFile."Cursor/User/keybindings.json".text = builtins.toJSON [
     { key = "ctrl+b"; command = "workbench.action.toggleSidebarVisibility"; when = "editorTextFocus"; }

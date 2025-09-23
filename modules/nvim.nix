@@ -36,7 +36,7 @@ in
       listchars = "tab:» ,trail:·,nbsp:␣";
       inccommand = "split";
       cursorline = true;
-      scrolloff = 10;
+      scrolloff = 5;
       confirm = true;
       termguicolors = true;
       expandtab = true; shiftwidth = 2; tabstop = 2; smartindent = true;
