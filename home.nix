@@ -32,6 +32,9 @@ in
   '';
 
   programs.home-manager.enable = true;
+
+  nixpkgs.config.allowUnfree = true;
+
   xdg.enable = true;
   fonts.fontconfig.enable = true;
 
@@ -464,12 +467,43 @@ in
 
     lua54Packages.luacheck
 
+
+    pkgs.code-cursor-fhs
   ];
 
   programs.zsh.shellAliases = {
     nv = "nvim";
     vim = "nvim";
     vdiff = "nvim -d";
+  };
+
+  programs.vscode = {
+    enable = true;
+
+    profiles.default = {
+      extensions = with pkgs.vscode-extensions; [
+        asvetliakov.vscode-neovim
+      ];
+      userSettings = {
+        "vscode-neovim.neovimExecutablePaths.linux" = "${config.home.homeDirectory}/.nix-profile/bin/nvim";
+        "vscode-neovim.neovimInitPath" = "${config.xdg.configHome}/nvim/init.lua";
+        "vscode-neovim.useCtrlKeys" = true;
+
+        "editor.bracketPairColorization.enabled" = true;
+        "editor.renderWhitespace" = "trailing";
+        "editor.comments.insertSpace" = false;
+        "files.autoSave" = "onFocusChange";
+        "editor.formatOnSave" = true;
+        "editor.minimap.enabled" = false;
+        "typescript.updateImportsOnFileMove.enabled" = "always";
+        "editor.rulers" = [ 80 100 ];
+      };
+      keybindings = [
+        # Make VS Code shortcuts similar in Code & Cursor
+        { key = "ctrl+b"; command = "workbench.action.toggleSidebarVisibility"; when = "editorTextFocus"; }
+        { key = "ctrl+shift+`"; command = "workbench.action.terminal.new"; when = "editorTextFocus"; }
+      ];
+    };
   };
 
   # Shared VSCode / Cursor settings
