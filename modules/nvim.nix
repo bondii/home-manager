@@ -292,7 +292,7 @@ in
   };
 
   home.packages = with pkgs; [
-    ripgrep fd git gcc nodejs
+    ripgrep fd gcc nodejs
     lua-language-server rust-analyzer gopls
     typescript-language-server typescript pyright
     nodePackages.vscode-langservers-extracted
