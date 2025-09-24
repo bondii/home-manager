@@ -14,7 +14,6 @@ in
 
     #enableLuaLoader = true;
 
-    # Bas
     globals = { mapleader = " "; have_nerd_font = haveNerd; };
     # List all options by  :h option-list
     opts = {
@@ -210,20 +209,32 @@ in
 
       undotree.enable = true;
 
+
+      luasnip.enable = true;
+      friendly-snippets.enable = true;
+
+
       # Completion: blink.cmp
-        #"blink-cmp" = {
-        #  enable = true;
-        #  settings = {
-        #    appearance.nerd_font_variant = "mono";
-        #    signature.enabled = true;
-        #    snippets.preset = "luasnip";
-        #    completion.documentation.auto_show = false;
-        #    sources = {
-        #      default = [ "lsp" "path" "snippets" ];
-        #    };
-        #    fuzzy.implementation = "lua";
-        #  };
-        #};
+      "blink-cmp" = {
+        enable = true;
+
+        settings = {
+          appearance.nerd_font_variant = "mono";
+          signature.enabled = true;
+          snippets.preset = "luasnip";
+          completion.documentation.auto_show = false;
+          sources = {
+            default = [ "lsp" "path" "snippets" ];
+          };
+          fuzzy.implementation = "lua";
+
+          keymap = {
+            "<S-CR>" = [ "accept" ];
+            "<S-Tab>" = [ "select_next" ];
+            #"<S-Tab>" = [ "select_prev" ];
+          };
+        };
+      };
 
       # LSP (utan Mason)
       lsp = {
@@ -238,15 +249,6 @@ in
           jsonls.enable = true;
           yamlls.enable = true;
         };
-        #diagnostics = {
-        #  severity_sort = true;
-        #  float = { border = "rounded"; source = "if_many"; };
-        #  underline.severity = "ERROR";
-        #  signs = lib.mkIf haveNerd {
-        #    text = { ERROR = "󰅚 "; WARN = "󰀪 "; INFO = "󰋽 "; HINT = "󰌶 "; };
-        #  };
-        #  virtual_text = { source = "if_many"; spacing = 2; };
-        #};
       };
 
       # formatter
@@ -266,6 +268,24 @@ in
 
     # nvim-lint-mappning + auto-run
     extraConfigLua = ''
+      -- Diagnostics --
+      vim.diagnostic.config({
+        virtual_text = { spacing = 2, prefix = "●" },
+        signs = true,
+        underline = true,
+        update_in_insert = false,
+        severity_sort = true,
+        float = { border = "rounded", source = "if_many" },
+      })
+
+      local opts = { noremap=true, silent=true }
+      vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
+      vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
+      vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, opts)
+      vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, opts)
+      -- END Diagnostics --
+
+
       local lint = require("lint")
       lint.linters_by_ft = {
         javascript = { "eslint_d" },
@@ -288,6 +308,10 @@ in
 
       vim.opt.undodir = vim.fn.stdpath("cache") .. "/undo"
       --require("telescope").load_extension("undo")
+
+      local ls = require("luasnip")
+      vim.keymap.set({"i","s"}, "<C-j>", function() if ls.expand_or_jumpable() then ls.expand_or_jump() end end, {silent=true})
+      vim.keymap.set({"i","s"}, "<C-k>", function() if ls.jumpable(-1) then ls.jump(-1) end end, {silent=true})
     '';
   };
 

@@ -237,7 +237,7 @@ in
       ];
 
       detect-rounded-corners = true;
-      corner-radius = 8;
+      corner-radius = 12;
       round-borders = 1;
       rounded-corners-exclude = [
         "window_type = 'dock'"         # i3bar/polybar
