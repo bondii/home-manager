@@ -260,7 +260,44 @@ in
           formatters_by_ft = { lua = [ "stylua" ]; };
         };
       };
+
+
+      copilot-lua = {
+        enable = true;
+        settings = {
+          suggestion = {
+            enabled = true;
+            auto_trigger = true;
+            debounce = 75;
+            keymap = {
+              accept = "<Tab>";
+              accept_word = "<M-w>";
+              accept_line = "<M-l>";
+              next = "<M-]>";
+              prev = "<M-[>";
+              dismiss = "<C-]>";
+            };
+          };
+          panel = {
+            enabled = true;
+            keymap = {
+              open = "<leader>cp";
+            };
+          };
+          filetypes = {
+            markdown = true;
+            gitcommit = true;
+            nix = true;
+            lua = true;
+            python = true;
+            javascript = true;
+            typescript = true;
+            # "*": true;
+          };
+        };
+      };
     };
+
 
     #extraPlugins = [ pkgs.vimPlugins.vimplugin-telescope-undo-nvim ];
 
