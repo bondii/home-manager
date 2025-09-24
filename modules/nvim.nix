@@ -40,6 +40,7 @@ in
       confirm = true;
       termguicolors = true;
       expandtab = true; shiftwidth = 2; tabstop = 2; smartindent = true;
+      viewoptions = "folds,cursor,curdir";
     };
 
     # Autocmds
@@ -49,6 +50,26 @@ in
         desc = "Highlight when yanking text";
         #group = "highlight-yank";
         callback.__raw = "function() vim.hl.on_yank() end";
+      }
+
+      {
+        event = [ "BufReadPost" ];
+        desc = "Return to last cursor position";
+        callback.__raw = ''
+          function(args)
+            -- Don't jump in special buffer types (commit, rebase, etc.)
+            local ft = vim.bo[args.buf].filetype
+            if ft == "gitcommit" or ft == "gitrebase" then return end
+            if vim.opt.diff:get() then return end
+
+            local mark = vim.api.nvim_buf_get_mark(args.buf, '"')
+            local lcount = vim.api.nvim_buf_line_count(args.buf)
+            local lnum, col = mark[1], mark[2]
+            if lnum > 0 and lnum <= lcount then
+              pcall(vim.api.nvim_win_set_cursor, 0, { lnum, col })
+            end
+          end
+        '';
       }
 
       # Create dirs automatically b4 save
