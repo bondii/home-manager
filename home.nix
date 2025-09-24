@@ -398,6 +398,7 @@ in
         "${M}+Return" = "exec --no-startup-id kitty-gl";
         "${M}+Shift+Return" = "exec --no-startup-id ${pkgs.xterm}/bin/xterm";
         "${M}+d"      = "exec rofi -show drun -show-icons -modi run";
+        "${M}+Shift+q" = "kill";
 
         "${M}+Shift+c" = "reload";
         "${M}+Shift+r" = "restart";
