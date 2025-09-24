@@ -336,7 +336,7 @@ in
 
       window = {
         border = 1;
-        hideEdgeBorders = "none";
+        hideEdgeBorders = "smart";
         titlebar = false;
         commands = [
           { criteria = { title = "alsamixer";  }; command = "floating enable, border pixel 1"; }
@@ -391,7 +391,7 @@ in
       };
 
       assigns = {
-        "10" = [{ class = "Spotify"; title = "Spotify Premium"; }];
+        "" = [{ class = "Spotify"; title = "Spotify Premium"; }];
       };
 
       keybindings = let M = "Mod1"; in {
@@ -428,7 +428,7 @@ in
 
         # Workspaces 1..10 (+ back/prev)
         "${M}+1"="workspace number 1"; "${M}+2"="workspace number 2"; "${M}+3"="workspace number 3"; "${M}+4"="workspace number 4"; "${M}+5"="workspace number 5";
-        "${M}+6"="workspace number 6"; "${M}+7"="workspace number 7"; "${M}+8"="workspace number 8"; "${M}+9"="workspace number 9"; "${M}+0"="workspace number 10";
+        "${M}+6"="workspace number 6"; "${M}+7"="workspace number 7"; "${M}+8"="workspace number 8"; "${M}+9"="workspace "; "${M}+0"="workspace ";
         "${M}+Ctrl+Right" = "workspace next";
         "${M}+Ctrl+Left"  = "workspace prev";
         "${M}+Shift+b"    = "move container to workspace back_and_forth; workspace back_and_forth";
@@ -438,7 +438,7 @@ in
         "${M}+Shift+3"="move container to workspace number 3";  "${M}+Shift+4"="move container to workspace number 4";
         "${M}+Shift+5"="move container to workspace number 5";  "${M}+Shift+6"="move container to workspace number 6";
         "${M}+Shift+7"="move container to workspace number 7";  "${M}+Shift+8"="move container to workspace number 8";
-        "${M}+Shift+9"="move container to workspace number 9";  "${M}+Shift+0"="move container to workspace number 10";
+        "${M}+Shift+9"="move container to workspace ";  "${M}+Shift+0"="move container to workspace ";
 
         "${M}+Ctrl+1"="move container to workspace 1; workspace number 1";
         "${M}+Ctrl+2"="move container to workspace 2; workspace number 2";
@@ -448,8 +448,8 @@ in
         "${M}+Ctrl+6"="move container to workspace 6; workspace number 6";
         "${M}+Ctrl+7"="move container to workspace 7; workspace number 7";
         "${M}+Ctrl+8"="move container to workspace 8; workspace number 8";
-        "${M}+Ctrl+9"="move container to workspace 9; workspace number 9";
-        "${M}+Ctrl+0"="move container to workspace 10; workspace number 10";
+        "${M}+Ctrl+9"="move container to workspace ; workspace ";
+        "${M}+Ctrl+0"="move container to workspace ; workspace ";
 
         # Resize
         "${M}+r" = ''mode "resize"'';
