@@ -7,7 +7,7 @@ let
 
   lockPixel = pkgs.writeShellScriptBin "lock-pixel" ''
     set -euo pipefail
-    down=8  # How much to downscale for pixelation
+    down=16  # How far down to downscale for pixelation
     up=$((10000 / down))
     tmpbg="$(mktemp -p /run/user/$UID --suffix=.png)"
 
@@ -153,8 +153,7 @@ in
   services.picom = {
     enable = true;
     settings = {
-      backend = "glx";
-      #backend = "xrender";
+      backend = "glx";  # If trouble: "xrender";
       vsync = true;
       detect-client-leader = true;
 
