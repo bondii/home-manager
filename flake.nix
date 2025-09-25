@@ -17,7 +17,7 @@
 
   outputs = inputs@{ self, nixpkgs, home-manager, nixgl, nixvim, ... }:
     let
-      mkHome = import ./lib/mkHome.nix inputs;
+      mkHome = import ./lib/mkHome.nix { inherit inputs; };
       hostConfigs = import ./hosts/default.nix { inherit inputs mkHome; };
     in {
       lib.mkHome = mkHome;
