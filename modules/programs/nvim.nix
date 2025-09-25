@@ -1,9 +1,9 @@
 { config, pkgs, lib, ... }:
-
 let
-  haveNerd = true;
+  cfg = config.pontus.features;
+  haveNerd = cfg.fonts;
 in
-{
+lib.mkIf cfg.nixvim {
   imports = [
     ./vim-shared.nix
   ];
@@ -351,16 +351,5 @@ in
       vim.keymap.set({"i","s"}, "<C-k>", function() if ls.jumpable(-1) then ls.jump(-1) end end, {silent=true})
     '';
   };
-
-  home.packages = with pkgs; [
-    ripgrep fd gcc nodejs
-    lua-language-server rust-analyzer gopls
-    typescript-language-server typescript pyright
-    nodePackages.vscode-langservers-extracted
-    nodePackages.yaml-language-server
-    nodePackages.bash-language-server
-    nodePackages.eslint_d ruff deadnix shellcheck golangci-lint markdownlint-cli
-    lua54Packages.luacheck
-  ];
 }
 

@@ -1,5 +1,5 @@
 {
-  description = "Pontus Home Manager on Arch (i3 + Xorg)";
+  description = "Pontus Home Manager configurations";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
@@ -15,21 +15,12 @@
     nixvim.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = { self, nixpkgs, home-manager, nixgl, nixvim, ... }:
-  let
-    system = "x86_64-linux";
-    pkgs = import nixpkgs {
-      inherit system;
-      overlays = [ nixgl.overlay ];
+  outputs = inputs@{ self, nixpkgs, home-manager, nixgl, nixvim, ... }:
+    let
+      mkHome = import ./lib/mkHome.nix inputs;
+      hostConfigs = import ./hosts/default.nix { inherit inputs mkHome; };
+    in {
+      lib.mkHome = mkHome;
+      homeConfigurations = hostConfigs;
     };
-  in {
-    homeConfigurations.pontus = home-manager.lib.homeManagerConfiguration {
-      inherit pkgs;
-      modules = [
-        nixvim.homeModules.nixvim
-        ./home.nix
-      ];
-    };
-  };
 }
-
