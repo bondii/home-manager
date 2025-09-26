@@ -29,6 +29,7 @@ Every host can override the following boolean flags when invoking `mkHome`:
 - `nixvim` – Neovim configuration via nixvim.
 - `vscode` – VS Code / Cursor configuration.
 - `fonts` – extra font packages.
+- `stylix` – base16-driven theming (GTK/Qt, fonts, CLI targets) via Stylix.
 
 By combining these flags you can tailor lightweight setups (e.g. disable `gui` and `fonts` but keep `nixvim` + `dev` for SSH).
 

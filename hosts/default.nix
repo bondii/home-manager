@@ -11,6 +11,7 @@ in let
     inherit system user;
     hostName = "arch-desktop";
     features = {
+      stylix = true;
       gui = true;
       dev = true;
       nixvim = true;
@@ -23,6 +24,7 @@ in let
     inherit system user;
     hostName = "ssh-minimal";
     features = {
+      stylix = true;
       gui = false;
       dev = true;
       nixvim = true;

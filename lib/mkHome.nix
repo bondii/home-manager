@@ -7,12 +7,13 @@
 , extraSpecialArgs ? {}
 }:
 let
-  inherit (inputs) nixpkgs home-manager nixgl nixvim;
+  inherit (inputs) nixpkgs home-manager nixgl nixvim stylix;
   lib = nixpkgs.lib;
   pkgs = import nixpkgs {
     inherit system;
     overlays = [ nixgl.overlay ];
   };
+  stylixEnabled = features.stylix or false;
   baseModules =
     [
       ./../modules/core/options.nix
@@ -25,6 +26,10 @@ let
       ./../modules/features/dev.nix
       ./../modules/features/gui.nix
       ./../modules/programs/vscode.nix
+    ]
+    ++ lib.optionals stylixEnabled [
+      ./../modules/features/stylix.nix
+      stylix.homeModules.stylix
     ]
     ++ lib.optionals (features.nixvim or true) [
       nixvim.homeModules.nixvim

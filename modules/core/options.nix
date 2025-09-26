@@ -11,6 +11,7 @@ in {
     };
 
     features = {
+      stylix = mkEnableOption "Stylix theming integration" // { default = features.stylix or true; };
       gui = mkEnableOption "graphical applications and desktop services" // { default = features.gui or true; };
       dev = mkEnableOption "language servers and development tooling" // { default = features.dev or true; };
       nixvim = mkEnableOption "NixVim configuration" // { default = features.nixvim or true; };

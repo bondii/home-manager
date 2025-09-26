@@ -50,16 +50,11 @@ lib.mkIf enableModule {
 
   programs.kitty = {
     enable = true;
-    font = {
-      name = "JetBrainsMono Nerd Font";
-      size = 11.0;
-    };
     settings = {
       confirm_os_window_close = 0;
       enable_audio_bell = "no";
       scrollback_lines = 10000;
       term = "xterm-kitty";
-      background_opacity = "0.9";
       dynamic_background_opacity = "yes";
     };
   };
@@ -67,7 +62,6 @@ lib.mkIf enableModule {
   programs.rofi = {
     enable = true;
     terminal = "kitty-gl";
-    theme = "Arc-Dark";
     extraConfig = {
       modi = "drun,run,ssh";
       show-icons = true;
@@ -76,19 +70,6 @@ lib.mkIf enableModule {
 
   services.dunst = {
     enable = true;
-    settings = {
-      global = {
-        font = "JetBrainsMono Nerd Font 10";
-        frame_color = "#5e81ac";
-        separator_color = "frame";
-        padding = 8;
-        horizontal_padding = 8;
-        icon_position = "left";
-      };
-      urgency_low     = { background = "#2e3440"; foreground = "#d8dee9"; timeout = 3; };
-      urgency_normal  = { background = "#2b303b"; foreground = "#eceff4"; timeout = 6; };
-      urgency_critical= { background = "#bf616a"; foreground = "#2e3440"; frame_color = "#bf616a"; timeout = 0; };
-    };
   };
 
   services.picom = {
@@ -157,12 +138,12 @@ lib.mkIf enableModule {
   programs.i3status-rust = {
     enable = true;
     bars.default = {
-      settings = {
-        theme.theme = "gruvbox-dark";
-        icons.icons = "material-nf";
-        trayOutput = "primary";
-        trayPadding = 4;
-      };
+      settings =
+        config.lib.stylix.i3status-rust.bar // {
+          icons.icons = "material-nf";
+          trayOutput = "primary";
+          trayPadding = 4;
+        };
       blocks = [
         { block = "cpu"; interval = 1; }
         { block = "memory"; format = " $icon $mem_used_percents "; format_alt = " $icon $swap_used_percents "; }
@@ -186,7 +167,6 @@ lib.mkIf enableModule {
       config = {
         modifier = "Mod1";
         terminal = "kitty-gl";
-        fonts = { names = [ "JetBrainsMono Nerd Font" ]; size = 10.0; };
 
         window = {
           border = 1;
@@ -200,10 +180,10 @@ lib.mkIf enableModule {
 
         floating.modifier = "Mod1";
 
-        bars = [{
+        bars = [({
           position = "bottom";
           statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs ${config.xdg.configHome}/i3status-rust/config-default.toml";
-        }];
+        } // config.stylix.targets.i3.exportedBarConfig)];
 
         startup = [
           { command = "nm-applet"; always = true; notification = false; }
@@ -224,22 +204,6 @@ lib.mkIf enableModule {
           smartBorders = "on";
         };
 
-        colors = {
-          focused = {
-            border      = "#90648B";
-            background  = "#660066";
-            text        = "#80FFF9";
-            indicator   = "#90648B";
-            childBorder = "#90648B";
-          };
-          urgent = {
-            border      = "#D94F70";
-            background  = "#D94F70";
-            text        = "#80FFF9";
-            indicator   = "#CB4B16";
-            childBorder = "#CB4B16";
-          };
-        };
 
         assigns = {
           "" = [{ class = "Spotify"; title = "Spotify Premium"; }];
