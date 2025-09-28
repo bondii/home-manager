@@ -24,6 +24,8 @@ in {
         statix
         deadnix
         manix # Quick lookup of Nix/HM options
+
+        pavucontrol
       ];
 
       # Automatic env in flake dirs
