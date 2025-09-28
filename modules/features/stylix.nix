@@ -1,9 +1,12 @@
-{ config, lib, pkgs, ... }:
-let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   cfg = config.pontus.features;
+  currentTheme = pkgs.base16-schemes + "/share/themes/horizon-terminal-dark.yaml";
   #currentTheme = pkgs.base16-schemes + "/share/themes/catppuccin-mocha.yaml";
-  #currentTheme = pkgs.base16-schemes + "/share/themes/horizon-terminal-dark.yaml";
-  currentTheme = pkgs.base16-schemes + "/share/themes/synth-midnight-dark.yaml";
 
   stylixFonts = {
     serif = {
@@ -30,37 +33,37 @@ let
     };
   };
 in
-lib.mkMerge [
-  (lib.mkIf cfg.stylix {
-    stylix = {
-      enable = true;
-      autoEnable = true;
-      base16Scheme = currentTheme;
-      polarity = "dark";
+  lib.mkMerge [
+    (lib.mkIf cfg.stylix {
+      stylix = {
+        enable = true;
+        autoEnable = true;
+        base16Scheme = currentTheme;
+        polarity = "dark";
 
-      opacity = {
-        applications = 1.0;
-        terminal = 0.9;
-        popups = 0.9;
+        opacity = {
+          applications = 1.0;
+          terminal = 0.9;
+          popups = 0.9;
+        };
+        targets = lib.mkMerge [
+          (lib.mkIf cfg.gui {
+            gtk.enable = true;
+            qt.enable = true;
+          })
+          (lib.mkIf cfg.fonts {
+            fontconfig.enable = true;
+          })
+          (lib.mkIf cfg.dev {
+            fzf.enable = true;
+          })
+        ];
       };
-      targets = lib.mkMerge [
-        (lib.mkIf cfg.gui {
-          gtk.enable = true;
-          qt.enable = true;
-        })
-        (lib.mkIf cfg.fonts {
-          fontconfig.enable = true;
-        })
-        (lib.mkIf cfg.dev {
-          fzf.enable = true;
-        })
-      ];
-    };
-  })
+    })
 
-  (lib.mkIf (cfg.stylix && cfg.fonts) {
-    stylix = {
-      fonts = stylixFonts;
-    };
-  })
-]
+    (lib.mkIf (cfg.stylix && cfg.fonts) {
+      stylix = {
+        fonts = stylixFonts;
+      };
+    })
+  ]

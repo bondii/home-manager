@@ -1,17 +1,16 @@
-{ inputs }:
-{ system
-, user
-, hostName
-, features ? {}
-, extraModules ? []
-, extraSpecialArgs ? {}
-}:
-let
+{inputs}: {
+  system,
+  user,
+  hostName,
+  features ? {},
+  extraModules ? [],
+  extraSpecialArgs ? {},
+}: let
   inherit (inputs) nixpkgs home-manager nixgl nixvim stylix;
   lib = nixpkgs.lib;
   pkgs = import nixpkgs {
     inherit system;
-    overlays = [ nixgl.overlay ];
+    overlays = [nixgl.overlay];
   };
   stylixEnabled = features.stylix or false;
   baseModules =
@@ -50,8 +49,8 @@ let
     };
   };
 in
-home-manager.lib.homeManagerConfiguration {
-  inherit pkgs;
-  modules = baseModules ++ [ featureModule userModule ] ++ extraModules;
-  extraSpecialArgs = extraSpecialArgs // { inherit inputs features hostName user; };
-}
+  home-manager.lib.homeManagerConfiguration {
+    inherit pkgs;
+    modules = baseModules ++ [featureModule userModule] ++ extraModules;
+    extraSpecialArgs = extraSpecialArgs // {inherit inputs features hostName user;};
+  }

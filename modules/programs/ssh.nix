@@ -1,5 +1,4 @@
-{ pkgs, ... }:
-{
+{pkgs, ...}: {
   programs.ssh = {
     enable = true;
     package = pkgs.openssh;
@@ -13,7 +12,7 @@
     matchBlocks = {
       "github.com" = {
         hostname = "github.com";
-        identityFile = [ "~/.ssh/id_ed25519" ];
+        identityFile = ["~/.ssh/id_ed25519"];
         extraOptions = {
           AddKeysToAgent = "yes";
           IdentitiesOnly = "yes";
@@ -21,7 +20,7 @@
       };
       "ssh.dev.azure.com" = {
         hostname = "ssh.dev.azure.com";
-        identityFile = [ "~/.ssh/id_rsa_azure" ];
+        identityFile = ["~/.ssh/id_rsa_azure"];
         extraOptions = {
           AddKeysToAgent = "yes";
           IdentitiesOnly = "yes";

@@ -1,10 +1,14 @@
-{ config, pkgs, lib, features, ... }:
-let
+{
+  config,
+  pkgs,
+  lib,
+  features,
+  ...
+}: let
   cfg = features;
   haveNerd = cfg.fonts or false;
-in
-{
-  imports = lib.optionals (cfg.nixvim or false) [ ./vim-shared.nix ];
+in {
+  imports = lib.optionals (cfg.nixvim or false) [./vim-shared.nix];
 
   config = lib.mkIf (cfg.nixvim or false) {
     programs.nixvim = {
@@ -13,7 +17,10 @@ in
 
       #enableLuaLoader = true;
 
-      globals = { mapleader = " "; have_nerd_font = haveNerd; };
+      globals = {
+        mapleader = " ";
+        have_nerd_font = haveNerd;
+      };
       # List all options by  :h option-list
       opts = {
         number = true;
@@ -37,21 +44,24 @@ in
         scrolloff = 5;
         confirm = true;
         termguicolors = true;
-        expandtab = true; shiftwidth = 2; tabstop = 2; smartindent = true;
+        expandtab = true;
+        shiftwidth = 2;
+        tabstop = 2;
+        smartindent = true;
         viewoptions = "folds,cursor,curdir";
-    };
+      };
 
       # Autocmds
       autoCmd = [
         {
-          event = [ "TextYankPost" ];
+          event = ["TextYankPost"];
           desc = "Highlight when yanking text";
           #group = "highlight-yank";
           callback.__raw = "function() vim.hl.on_yank() end";
         }
 
         {
-          event = [ "BufReadPost" ];
+          event = ["BufReadPost"];
           desc = "Return to last cursor position";
           callback.__raw = ''
             function(args)
@@ -88,41 +98,157 @@ in
       # Keymaps
       keymaps = [
         # Normal: Ctrl-S saves (silent, only if changed with :update)
-        { mode = "n"; key = "<C-s>"; action = ":update<CR>"; options.silent = true; }
+        {
+          mode = "n";
+          key = "<C-s>";
+          action = ":update<CR>";
+          options.silent = true;
+        }
 
         # Insert: Ctrl-S saves and stays in Insert
-        { mode = "i"; key = "<C-s>"; action = "<C-o>:update<CR>"; options.silent = true; }
+        {
+          mode = "i";
+          key = "<C-s>";
+          action = "<C-o>:update<CR>";
+          options.silent = true;
+        }
 
         # Visual/Select: Ctrl-S saves
-        { mode = "v"; key = "<C-s>"; action = "<C-c>:update<CR>"; options.silent = true; }
-        { mode = "x"; key = "<C-s>"; action = "<C-c>:update<CR>"; options.silent = true; }
-        { mode = "s"; key = "<C-s>"; action = "<C-c>:update<CR>"; options.silent = true; }
+        {
+          mode = "v";
+          key = "<C-s>";
+          action = "<C-c>:update<CR>";
+          options.silent = true;
+        }
+        {
+          mode = "x";
+          key = "<C-s>";
+          action = "<C-c>:update<CR>";
+          options.silent = true;
+        }
+        {
+          mode = "s";
+          key = "<C-s>";
+          action = "<C-c>:update<CR>";
+          options.silent = true;
+        }
 
         # Leader save bindings
-        { mode = "n"; key = "<leader>w"; action = ":update<CR>"; options.silent = true; }
-        { mode = "n"; key = "<leader>W"; action = ":wall<CR>";  options.silent = true; }
+        {
+          mode = "n";
+          key = "<leader>w";
+          action = ":update<CR>";
+          options.silent = true;
+        }
+        {
+          mode = "n";
+          key = "<leader>W";
+          action = ":wall<CR>";
+          options.silent = true;
+        }
 
-        { mode = [ "n" "v" ]; key = "<Space>"; action = "<Nop>"; options.silent = true; }
-        { mode = "n"; key = "<Esc>"; action = "<cmd>nohlsearch<CR>"; options.desc = "Clear search highlight"; }
-        { mode = "t"; key = "<Esc><Esc>"; action = "<C-\\\\><C-n>"; options.desc = "Exit terminal"; }
-        { mode = "n"; key = "<C-h>"; action = "<C-w><C-h>"; options.desc = "Win left"; }
-        { mode = "n"; key = "<C-l>"; action = "<C-w><C-l>"; options.desc = "Win right"; }
-        { mode = "n"; key = "<C-j>"; action = "<C-w><C-j>"; options.desc = "Win down"; }
-        { mode = "n"; key = "<C-k>"; action = "<C-w><C-k>"; options.desc = "Win up"; }
+        {
+          mode = ["n" "v"];
+          key = "<Space>";
+          action = "<Nop>";
+          options.silent = true;
+        }
+        {
+          mode = "n";
+          key = "<Esc>";
+          action = "<cmd>nohlsearch<CR>";
+          options.desc = "Clear search highlight";
+        }
+        {
+          mode = "t";
+          key = "<Esc><Esc>";
+          action = "<C-\\\\><C-n>";
+          options.desc = "Exit terminal";
+        }
+        {
+          mode = "n";
+          key = "<C-h>";
+          action = "<C-w><C-h>";
+          options.desc = "Win left";
+        }
+        {
+          mode = "n";
+          key = "<C-l>";
+          action = "<C-w><C-l>";
+          options.desc = "Win right";
+        }
+        {
+          mode = "n";
+          key = "<C-j>";
+          action = "<C-w><C-j>";
+          options.desc = "Win down";
+        }
+        {
+          mode = "n";
+          key = "<C-k>";
+          action = "<C-w><C-k>";
+          options.desc = "Win up";
+        }
         #{ mode = "i"; key = "jk"; action = "<Esc>"; options.silent = true; }
 
         # Telescope binds
-        { mode = "n"; key = "<leader>sh"; action.__raw = "require('telescope.builtin').help_tags"; options.desc = "[S]earch [H]elp"; }
-        { mode = "n"; key = "<leader>sk"; action.__raw = "require('telescope.builtin').keymaps"; options.desc = "[S]earch [K]eymaps"; }
-        { mode = "n"; key = "<leader>sf"; action.__raw = "require('telescope.builtin').find_files"; options.desc = "[S]earch [F]iles"; }
-        { mode = "n"; key = "<leader>ss"; action.__raw = "require('telescope.builtin').builtin"; options.desc = "[S]elect Telescope"; }
-        { mode = "n"; key = "<leader>sw"; action.__raw = "require('telescope.builtin').grep_string"; options.desc = "[S]earch current [W]ord"; }
-        { mode = "n"; key = "<leader>sg"; action.__raw = "require('telescope.builtin').live_grep"; options.desc = "[S]earch by [G]rep"; }
-        { mode = "n"; key = "<leader>sd"; action.__raw = "require('telescope.builtin').diagnostics"; options.desc = "[S]earch [D]iagnostics"; }
-        { mode = "n"; key = "<leader>sr"; action.__raw = "require('telescope.builtin').resume"; options.desc = "[S]earch [R]esume"; }
-        { mode = "n"; key = "<leader>s."; action.__raw = "require('telescope.builtin').oldfiles"; options.desc = "Recent files"; }
         {
-          mode = "n"; key = "<leader>/";
+          mode = "n";
+          key = "<leader>sh";
+          action.__raw = "require('telescope.builtin').help_tags";
+          options.desc = "[S]earch [H]elp";
+        }
+        {
+          mode = "n";
+          key = "<leader>sk";
+          action.__raw = "require('telescope.builtin').keymaps";
+          options.desc = "[S]earch [K]eymaps";
+        }
+        {
+          mode = "n";
+          key = "<leader>sf";
+          action.__raw = "require('telescope.builtin').find_files";
+          options.desc = "[S]earch [F]iles";
+        }
+        {
+          mode = "n";
+          key = "<leader>ss";
+          action.__raw = "require('telescope.builtin').builtin";
+          options.desc = "[S]elect Telescope";
+        }
+        {
+          mode = "n";
+          key = "<leader>sw";
+          action.__raw = "require('telescope.builtin').grep_string";
+          options.desc = "[S]earch current [W]ord";
+        }
+        {
+          mode = "n";
+          key = "<leader>sg";
+          action.__raw = "require('telescope.builtin').live_grep";
+          options.desc = "[S]earch by [G]rep";
+        }
+        {
+          mode = "n";
+          key = "<leader>sd";
+          action.__raw = "require('telescope.builtin').diagnostics";
+          options.desc = "[S]earch [D]iagnostics";
+        }
+        {
+          mode = "n";
+          key = "<leader>sr";
+          action.__raw = "require('telescope.builtin').resume";
+          options.desc = "[S]earch [R]esume";
+        }
+        {
+          mode = "n";
+          key = "<leader>s.";
+          action.__raw = "require('telescope.builtin').oldfiles";
+          options.desc = "Recent files";
+        }
+        {
+          mode = "n";
+          key = "<leader>/";
           action.__raw = ''
             function()
               require('telescope.builtin').current_buffer_fuzzy_find(
@@ -133,7 +259,8 @@ in
           options.desc = "Fuzzy search in buffer";
         }
         {
-          mode = "n"; key = "<leader>s/";
+          mode = "n";
+          key = "<leader>s/";
           action.__raw = ''
             function()
               require('telescope.builtin').live_grep({ grep_open_files = true, prompt_title = "Live Grep in Open Files" })
@@ -142,12 +269,18 @@ in
           options.desc = "[S]earch [/] in open files";
         }
         {
-          mode = "n"; key = "<leader>f";
+          mode = "n";
+          key = "<leader>f";
           action.__raw = ''function() require("conform").format({ async = true, lsp_format = "fallback" }) end'';
           options.desc = "[F]ormat buffer";
         }
 
-        { mode = "n"; key = "<leader>u>"; action = "<cmd>UndotreeToggle<CR>"; options.desc = "Undo tree"; }
+        {
+          mode = "n";
+          key = "<leader>u>";
+          action = "<cmd>UndotreeToggle<CR>";
+          options.desc = "Undo tree";
+        }
         #{ mode = "n"; key = "<leader>u>"; action = "<cmd>Telescope undo<CR>"; options.desc = "Undo tree"; }
       ];
 
@@ -174,14 +307,33 @@ in
           enable = true;
           settings = {
             ensure_installed = [
-              "bash" "c" "cpp" "lua" "python" "rust" "go"
-              "javascript" "typescript" "tsx"
-              "json" "yaml" "toml" "nix" "markdown" "regex" "diff" "vim" "vimdoc" "luadoc" "markdown_inline" "query"
+              "bash"
+              "c"
+              "cpp"
+              "lua"
+              "python"
+              "rust"
+              "go"
+              "javascript"
+              "typescript"
+              "tsx"
+              "json"
+              "yaml"
+              "toml"
+              "nix"
+              "markdown"
+              "regex"
+              "diff"
+              "vim"
+              "vimdoc"
+              "luadoc"
+              "markdown_inline"
+              "query"
             ];
             highlight.enable = true;
-            highlight.additional_vim_regex_highlighting = [ "ruby" ];
+            highlight.additional_vim_regex_highlighting = ["ruby"];
             indent.enable = true;
-            indent.disable = [ "ruby" ];
+            indent.disable = ["ruby"];
           };
         };
 
@@ -208,10 +360,8 @@ in
 
         undotree.enable = true;
 
-
         luasnip.enable = true;
         friendly-snippets.enable = true;
-
 
         # Completion: blink.cmp
         "blink-cmp" = {
@@ -223,13 +373,13 @@ in
             snippets.preset = "luasnip";
             completion.documentation.auto_show = false;
             sources = {
-              default = [ "lsp" "path" "snippets" ];
+              default = ["lsp" "path" "snippets"];
             };
             fuzzy.implementation = "lua";
 
             keymap = {
-              "<S-CR>" = [ "accept" ];
-              "<S-Tab>" = [ "select_next" ];
+              "<S-CR>" = ["accept"];
+              "<S-Tab>" = ["select_next"];
               #"<S-Tab>" = [ "select_prev" ];
             };
           };
@@ -239,11 +389,19 @@ in
         lsp = {
           enable = true;
           servers = {
-            lua_ls = { enable = true; settings.Lua.completion.callSnippet = "Replace"; };
+            nixd.enable = true;
+            lua_ls = {
+              enable = true;
+              settings.Lua.completion.callSnippet = "Replace";
+            };
             bashls.enable = true;
             pyright.enable = true;
-            ts_ls.enable = true;          # om din Nixvim-version kräver tsserver: byt till tsserver
-            rust_analyzer = { enable = true; installCargo = true; installRustc = true; };
+            ts_ls.enable = true; # om din Nixvim-version kräver tsserver: byt till tsserver
+            rust_analyzer = {
+              enable = true;
+              installCargo = true;
+              installRustc = true;
+            };
             gopls.enable = true;
             jsonls.enable = true;
             yamlls.enable = true;
@@ -255,11 +413,16 @@ in
           enable = true;
           settings = {
             notify_on_error = false;
-            format_on_save = { lsp_format = "fallback"; timeout_ms = 500; };
-            formatters_by_ft = { lua = [ "stylua" ]; };
+            format_on_save = {
+              lsp_format = "fallback";
+              timeout_ms = 500;
+            };
+            formatters_by_ft = {
+              nix = ["alejandra"]; # alternativ: nixpkgs.nixfmt
+              lua = ["stylua"];
+            };
           };
         };
-
 
         copilot-lua = {
           enable = true;
@@ -295,10 +458,12 @@ in
             };
           };
         };
-    };
+      };
 
-
-      #extraPlugins = [ pkgs.vimPlugins.vimplugin-telescope-undo-nvim ];
+      extraPlugins = with pkgs.vimPlugins; [
+        #vimplugin-telescope-undo-nvim
+        vim-nix
+      ];
 
       extraConfigVim = "source ${config.xdg.configHome}/vim/shared-maps.vim";
 
@@ -330,13 +495,14 @@ in
           jsx        = { "eslint_d" },
           lua        = { "luacheck" },
           python     = { "ruff" },
-          nix        = { "deadnix" },
+          nix        = { "statix", "deadnix" },
           sh         = { "shellcheck" },
           bash       = { "shellcheck" },
           zsh        = { "shellcheck" },
           go         = { "golangci_lint" },
           markdown   = { "markdownlint" },
         }
+
 
         vim.api.nvim_create_autocmd({ "BufWritePost", "BufReadPost", "InsertLeave" }, {
           callback = function() require("lint").try_lint() end,

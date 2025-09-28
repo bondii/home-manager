@@ -1,5 +1,7 @@
-{ inputs, mkHome }:
-let
+{
+  inputs,
+  mkHome,
+}: let
   user = {
     name = "pontus";
     homeDirectory = "/home/pontus";

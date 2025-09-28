@@ -1,5 +1,8 @@
-{ lib, pkgs, ... }:
 {
+  lib,
+  pkgs,
+  ...
+}: {
   programs.git = {
     enable = true;
     package = pkgs.gitFull;
@@ -7,8 +10,14 @@
     userEmail = "pontus_eriksson@live.com";
 
     extraConfig = {
-      push = { default = "current"; autoSetupRemote = true; };
-      pull = { default = "current"; autoSetupRemote = true; };
+      push = {
+        default = "current";
+        autoSetupRemote = true;
+      };
+      pull = {
+        default = "current";
+        autoSetupRemote = true;
+      };
       pager.branch = false;
       rerere.enabled = true;
       branch.sort = "committerdate";

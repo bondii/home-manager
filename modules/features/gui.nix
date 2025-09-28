@@ -1,11 +1,16 @@
-{ config, lib, pkgs, ... }:
-let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   cfg = config.pontus.features;
   enableGui = cfg.gui;
 
-  wrap = name: bin: pkgs.writeShellScriptBin name ''
-    exec ${pkgs.nixgl.nixGLMesa}/bin/nixGLMesa ${bin} "$@"
-  '';
+  wrap = name: bin:
+    pkgs.writeShellScriptBin name ''
+      exec ${pkgs.nixgl.nixGLMesa}/bin/nixGLMesa ${bin} "$@"
+    '';
 
   lockPixel = pkgs.writeShellScriptBin "lock-pixel" ''
     set -euo pipefail
@@ -21,11 +26,10 @@ let
   '';
 
   lockCommandDefault = "${lockPixel}/bin/lock-pixel";
-in
-{
+in {
   options.pontus.gui = {
     i3 = {
-      enable = lib.mkEnableOption "i3 window manager integration" // { default = true; };
+      enable = lib.mkEnableOption "i3 window manager integration" // {default = true;};
     };
     lockCommand = lib.mkOption {
       type = lib.types.str;
@@ -34,38 +38,39 @@ in
     };
   };
 
-  imports = [ ./gui/i3.nix ];
+  imports = [./gui/i3.nix];
 
   config = lib.mkIf enableGui {
+    home.packages = with pkgs;
+      [
+        (wrap "kitty-gl" "${pkgs.kitty}/bin/kitty")
+        (wrap "imv-gl" "${pkgs.imv}/bin/imv")
+        (wrap "picom-gl" "${pkgs.picom}/bin/picom")
+        pkgs.nixgl.nixGLMesa
 
-    home.packages = with pkgs; [
-      (wrap "kitty-gl"   "${pkgs.kitty}/bin/kitty")
-      (wrap "imv-gl"     "${pkgs.imv}/bin/imv")
-      (wrap "picom-gl"   "${pkgs.picom}/bin/picom")
-      pkgs.nixgl.nixGLMesa
+        maim
+        imagemagick
+        lockPixel
 
-      maim
-      imagemagick
-      lockPixel
+        xterm
+        brightnessctl
 
-      xterm
-      brightnessctl
-
-      feh
-      imv
-      zathura
-      blueman
-      networkmanagerapplet
-      libnotify
-      xss-lock
-      xfce.xfce4-clipman-plugin
-      redshift
-    ] ++ lib.optionals cfg.fonts [
-      nerd-fonts.jetbrains-mono
-      noto-fonts
-      noto-fonts-cjk-sans
-      noto-fonts-emoji
-    ];
+        feh
+        imv
+        zathura
+        blueman
+        networkmanagerapplet
+        libnotify
+        xss-lock
+        xfce.xfce4-clipman-plugin
+        redshift
+      ]
+      ++ lib.optionals cfg.fonts [
+        nerd-fonts.jetbrains-mono
+        noto-fonts
+        noto-fonts-cjk-sans
+        noto-fonts-emoji
+      ];
 
     programs.kitty = {
       enable = true;
@@ -122,12 +127,12 @@ in
         frame-opacity = 0.90;
         inactive-opacity = 0.9;
         wintypes = {
-          dock = { shadow = false; };
-          dnd = { shadow = false; };
-          tooltip = { shadow = false; };
-          menu = { shadow = false; };
-          dropdown_menu = { shadow = false; };
-          popup_menu = { shadow = false; };
+          dock = {shadow = false;};
+          dnd = {shadow = false;};
+          tooltip = {shadow = false;};
+          menu = {shadow = false;};
+          dropdown_menu = {shadow = false;};
+          popup_menu = {shadow = false;};
         };
       };
     };
@@ -138,7 +143,7 @@ in
       enable = true;
       lockCmd = config.pontus.gui.lockCommand;
       inactiveInterval = 10;
-      xss-lock.extraOptions = [ "--transfer-sleep-lock" ];
+      xss-lock.extraOptions = ["--transfer-sleep-lock"];
     };
 
     services.redshift = {

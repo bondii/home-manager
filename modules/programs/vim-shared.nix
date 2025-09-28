@@ -1,6 +1,9 @@
-{ config, pkgs, lib, ... }:
-
-let
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}: let
   sharedMaps = ''
     " ~/.config/vim/shared-maps.vim
 
@@ -33,4 +36,3 @@ let
 in {
   xdg.configFile."vim/shared-maps.vim".text = sharedMaps;
 }
-
