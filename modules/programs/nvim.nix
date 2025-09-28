@@ -11,6 +11,16 @@ in {
   imports = lib.optionals (cfg.nixvim or false) [./vim-shared.nix];
 
   config = lib.mkIf (cfg.nixvim or false) {
+    home.packages = with pkgs; [
+      terraform # Formatter (and CLI)
+      terraform-ls
+      tflint
+      docker-language-server
+      hadolint # Dockerfile linter
+      dockfmt
+      yamllint
+    ];
+
     programs.nixvim = {
       enable = true;
       defaultEditor = true;
@@ -329,6 +339,10 @@ in {
               "luadoc"
               "markdown_inline"
               "query"
+
+              "hcl"
+              "terraform"
+              "dockerfile"
             ];
             highlight.enable = true;
             highlight.additional_vim_regex_highlighting = ["ruby"];
@@ -404,9 +418,56 @@ in {
             };
             gopls.enable = true;
             jsonls.enable = true;
-            yamlls.enable = true;
-          };
-        };
+
+            terraformls.enable = true;
+
+            yamlls = {
+              enable = true;
+
+              # Azure DevOps Pipelines via YAML-LS + SchemaStore
+              settings = {
+                redhat.telemetry.enabled = false;
+                yaml = {
+                  validate = true;
+                  hover = true;
+                  completion = true;
+                  format.enable = true;
+                  schemaStore = {
+                    enable = true;
+                    url = "https://www.schemastore.org/api/json/catalog.json";
+                  };
+                  # Point specifically at the Azure Pipelines schema
+                  schemas = {
+                    "https://json.schemastore.org/azure-pipelines.json" = [
+                      "azure-pipelines.yml"
+                      "azure-pipelines.yaml"
+                      "azure-pipelines/*.yml"
+                      "azure-pipelines/*.yaml"
+                      ".azure-pipelines/*.yml"
+                      ".azure-pipelines/*.yaml"
+                      "**/azure-pipelines*.y?(a)ml"
+                    ];
+                  };
+                };
+              };
+            };
+
+            docker_compose_language_service.enable = lib.mkForce false;
+            dockerls = {
+              enable = true;
+
+              filetypes = ["dockerfile" "yaml" "json" "hcl"];
+              #rootDir.__raw = ''
+              #  require("lspconfig.util").root_pattern(
+              #    "compose.yaml", "compose.yml",
+              #    "docker-compose.yaml", "docker-compose.yml",
+              #    "docker-bake.hcl", "docker-bake.json",
+              #    "Dockerfile", ".git"
+              #  )
+              #'';
+            };
+          }; # END servers
+        }; # END lsp
 
         # formatter
         conform-nvim = {
@@ -418,8 +479,10 @@ in {
               timeout_ms = 500;
             };
             formatters_by_ft = {
-              nix = ["alejandra"]; # alternativ: nixpkgs.nixfmt
+              nix = ["alejandra"]; # alt: nixpkgs.nixfmt
               lua = ["stylua"];
+              terraform = ["terraform_fmt"];
+              dockerfile = ["dockfmt"];
             };
           };
         };
@@ -501,6 +564,8 @@ in {
           zsh        = { "shellcheck" },
           go         = { "golangci_lint" },
           markdown   = { "markdownlint" },
+          dockerfile = { "hadolint" },
+          yaml       = { "yamllint" },
         }
 
 
@@ -514,6 +579,18 @@ in {
         local ls = require("luasnip")
         vim.keymap.set({"i","s"}, "<C-j>", function() if ls.expand_or_jumpable() then ls.expand_or_jump() end end, {silent=true})
         vim.keymap.set({"i","s"}, "<C-k>", function() if ls.jumpable(-1) then ls.jump(-1) end end, {silent=true})
+
+        vim.filetype.add({
+          extension = {
+            tf = "terraform",
+            tfvars = "terraform",  -- Some use  "terraform-vars", terraformls can handle either
+            hcl = "hcl",
+          },
+        })
+        vim.filetype.add({
+          filename = { ["Dockerfile"] = "dockerfile" },
+          pattern  = { ["Dockerfile%..*"] = "dockerfile" },
+        })
       '';
     };
   };

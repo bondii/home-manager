@@ -8,29 +8,37 @@
 in {
   config = lib.mkMerge [
     {
-      programs.home-manager.enable = true;
       nixpkgs.config.allowUnfree = true;
       xdg.enable = true;
 
-      home.sessionPath = ["${config.home.homeDirectory}/.nix-profile/bin"];
-      home.sessionVariables = {
-        XDG_DATA_DIRS = "${config.home.homeDirectory}/.nix-profile/share:/usr/local/share:/usr/share";
+      home = {
+        sessionPath = ["${config.home.homeDirectory}/.nix-profile/bin"];
+        sessionVariables = {
+          XDG_DATA_DIRS = "${config.home.homeDirectory}/.nix-profile/share:/usr/local/share:/usr/share";
+        };
+
+        packages = with pkgs; [
+          alejandra # or nixfmt
+          statix
+          deadnix
+          manix # Quick lookup of Nix/HM options
+
+          pavucontrol
+          btop
+          htop
+        ];
       };
 
       services.ssh-agent.enable = true;
 
-      home.packages = with pkgs; [
-        alejandra # or nixfmt
-        statix
-        deadnix
-        manix # Quick lookup of Nix/HM options
-
-        pavucontrol
-      ];
-
-      # Automatic env in flake dirs
-      programs.direnv.enable = true;
-      programs.direnv.nix-direnv.enable = true;
+      programs = {
+        home-manager.enable = true;
+        # Automatic env in flake dirs
+        direnv = {
+          enable = true;
+          nix-direnv.enable = true;
+        };
+      };
     }
 
     (lib.mkIf cfg.nixvim {
