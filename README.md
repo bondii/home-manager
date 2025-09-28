@@ -1,36 +1,44 @@
 # Pontus Home Manager
 
-This repository contains modular Home Manager configurations that can be reused across multiple machines.
+Modular Home Manager configurations packaged as a Nix flake. It builds per‑user environments (not a NixOS system) and exposes named profiles you can switch to locally or over SSH.
 
-## Structure
+## Why no configuration.nix?
+`configuration.nix` is for NixOS system configs. This repo targets user‑level Home Manager via flakes, so profiles are applied with `home-manager switch --flake ...` rather than through NixOS.
 
-- `flake.nix` – entrypoint that exposes the Home Manager configurations exported from `hosts/default.nix`.
-- `lib/mkHome.nix` – helper that assembles a Home Manager configuration from common modules and feature flags.
-- `modules/` – reusable modules grouped into `core`, `features`, and `programs`.
-- `hosts/` – host presets that call `mkHome` with machine-specific overrides.
+## Project structure
+- `flake.nix` — Declares inputs and publishes `homeConfigurations` by importing `hosts/` and the factory in `lib/`.
+- `lib/mkHome.nix` — Factory that assembles a Home Manager config: wires `nixpkgs` (with `nixGL` overlay), loads base modules, and conditionally includes feature modules; accepts `extraModules`/`extraSpecialArgs`.
+- `modules/` — Reusable modules:
+  - `core/` options and cross‑cutting base config (enables HM, XDG, formatting tools).
+  - `features/` opt‑in slices gated by `pontus.features.*` (e.g. `dev`, `gui`, `stylix`).
+  - `programs/` tool integrations (git, zsh, ssh, nvim, vscode).
+- `hosts/` — Host presets calling `mkHome` with `system`, `user`, `hostName`, and `features`.
+
+## How pieces relate
+- `flake.nix` exposes `homeConfigurations`.
+- `hosts/default.nix` defines named profiles using `mkHome`.
+- `lib/mkHome.nix` composes `modules/*` and injects `features`/`hostName` as options (`modules/core/options.nix`).
+- Feature modules activate with `lib.mkIf config.pontus.features.<flag>`.
+
+## Build, test, apply
+- List outputs: `nix flake show`
+- Build without switching: `nix build .#homeConfigurations.<profile>.activationPackage`
+- Apply (dry run): `home-manager switch --flake .#<profile> --dry-run`
+- Apply: `home-manager switch --flake .#<profile>`
+- Sanity: `nix flake check` (evaluates hosts)
 
 ## Available profiles
-
-- `pontus` / `pontus@arch-desktop` – full graphical environment with all tooling enabled.
-- `pontus@ssh-minimal` – text-first profile suitable for SSH sessions (GUI packages disabled).
-
-Switch using, for example:
-
-```sh
-home-manager switch --flake .#pontus@ssh-minimal
-```
+- `pontus` / `pontus@arch-desktop` — full graphical environment.
+- `pontus@ssh-minimal` — headless/SSH‑friendly.
 
 ## Feature flags
+Boolean flags set per host in `hosts/` and defaulted in `modules/core/options.nix`:
+- `gui`, `dev`, `nixvim`, `fonts`, `stylix`, `vscode`, `laptop`.
 
-Every host can override the following boolean flags when invoking `mkHome`:
+## Adding things
+- New host/profile: add a `mkHome { … }` entry in `hosts/default.nix` and return it under a friendly name (e.g. `"pontus@ssh-minimal"`).
+- New always‑on program: create `modules/programs/foo.nix`, then add it to `baseModules` in `lib/mkHome.nix`.
+- New feature flag: declare it in `modules/core/options.nix`, implement `modules/features/foo.nix` guarded by `lib.mkIf config.pontus.features.foo`, and include it conditionally in `lib/mkHome.nix`.
+- Per‑host override: pass an inline module via `extraModules` in the host’s `mkHome` call.
 
-- `gui` – graphical stack (i3, Kitty, dunst, etc.).
-- `dev` – language servers and CLI tooling.
-- `nixvim` – Neovim configuration via nixvim.
-- `vscode` – VS Code / Cursor configuration.
-- `fonts` – extra font packages.
-- `stylix` – base16-driven theming (GTK/Qt, fonts, CLI targets) via Stylix.
-
-By combining these flags you can tailor lightweight setups (e.g. disable `gui` and `fonts` but keep `nixvim` + `dev` for SSH).
-
-To create a new host, add an entry to `hosts/default.nix` with the desired overrides or create an additional file that returns an attrset of configurations.
+See `AGENTS.md` for contributor guidelines and coding/testing conventions.

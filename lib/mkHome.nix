@@ -12,7 +12,6 @@
     inherit system;
     overlays = [nixgl.overlay];
   };
-  stylixEnabled = features.stylix or false;
   baseModules =
     [
       ./../modules/core/options.nix
@@ -24,16 +23,18 @@
       ./../modules/programs/starship.nix
       ./../modules/features/dev.nix
       ./../modules/features/gui.nix
-      ./../modules/features/laptop.nix
       ./../modules/programs/vscode.nix
     ]
-    ++ lib.optionals stylixEnabled [
+    ++ lib.optionals (features.stylix or false) [
       ./../modules/features/stylix.nix
       stylix.homeModules.stylix
     ]
     ++ lib.optionals (features.nixvim or true) [
       nixvim.homeModules.nixvim
       ./../modules/programs/nvim.nix
+    ]
+    ++ lib.optionals (features.laptop or false) [
+      ./../modules/features/laptop.nix
     ];
   featureModule = {
     pontus = {
