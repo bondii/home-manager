@@ -25,6 +25,7 @@ let
       ./../modules/programs/starship.nix
       ./../modules/features/dev.nix
       ./../modules/features/gui.nix
+      ./../modules/features/laptop.nix
       ./../modules/programs/vscode.nix
     ]
     ++ lib.optionals stylixEnabled [

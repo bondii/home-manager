@@ -15,8 +15,9 @@ in let
       gui = true;
       dev = true;
       nixvim = true;
-      vscode = true;
+      laptop = true;
       fonts = true;
+      vscode = true;
     };
   };
 
@@ -28,8 +29,9 @@ in let
       gui = false;
       dev = true;
       nixvim = true;
-      vscode = false;
+      laptop = false;
       fonts = false;
+      vscode = false;
     };
   };
 in {

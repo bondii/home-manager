@@ -15,8 +15,10 @@ in {
       gui = mkEnableOption "graphical applications and desktop services" // { default = features.gui or true; };
       dev = mkEnableOption "language servers and development tooling" // { default = features.dev or true; };
       nixvim = mkEnableOption "NixVim configuration" // { default = features.nixvim or true; };
-      vscode = mkEnableOption "VS Code / Cursor configuration" // { default = features.vscode or true; };
+      laptop = mkEnableOption "laptop specific configuration" // {default = features.laptop or false;};
       fonts = mkEnableOption "additional font packages" // { default = features.fonts or true; };
+      vscode = mkEnableOption "VS Code / Cursor configuration" // { default = features.vscode or true; };
+      stylix = mkEnableOption "Stylix theming integration" // {default = features.stylix or true;};
     };
   };
 
