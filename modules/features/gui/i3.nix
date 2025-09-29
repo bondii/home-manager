@@ -13,13 +13,18 @@ in
     programs.i3status-rust = {
       enable = true;
       bars.default = {
-        settings =
-          config.lib.stylix.i3status-rust.bar
-          // {
-            icons.icons = "material-nf";
-            trayOutput = "primary";
-            trayPadding = 4;
-          };
+        settings = {
+          #config.lib.stylix.i3status-rust.bar
+          #// {
+          #  icons.icons = "material-nf";
+          #  trayOutput = "primary";
+          #  trayPadding = 4;
+          #};
+          theme.theme = "gruvbox-dark";
+          icons.icons = "material-nf";
+          trayOutput = "primary";
+          trayPadding = 4;
+        };
         blocks = [
           {
             block = "cpu";
@@ -74,11 +79,12 @@ in
           floating.modifier = "Mod1";
 
           bars = [
-            ({
-                position = "bottom";
-                statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs ${config.xdg.configHome}/i3status-rust/config-default.toml";
-              }
-              // config.stylix.targets.i3.exportedBarConfig)
+            #(
+            {
+              position = "bottom";
+              statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs ${config.xdg.configHome}/i3status-rust/config-default.toml";
+            }
+            #// config.stylix.targets.i3.exportedBarConfig)
           ];
 
           startup = [
