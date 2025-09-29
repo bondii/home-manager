@@ -59,7 +59,7 @@ in
       ];
       sessionVariables = {
         PYTHON_KEYRING_BACKEND = "keyrings.google_artifactregistry_auth.GoogleArtifactRegistryKeyring";
-        LD_LIBRARY_PATH = "${pkgs.glibc}/lib:${pkgs.stdenv.cc.cc.lib}/lib:${pkgs.zlib}/lib${"\${LD_LIBRARY_PATH:+:\${LD_LIBRARY_PATH}}"}";
+        #LD_LIBRARY_PATH = "${pkgs.glibc}/lib:${pkgs.stdenv.cc.cc.lib}/lib:${pkgs.zlib}/lib${"\${LD_LIBRARY_PATH:+:\${LD_LIBRARY_PATH}}"}";
         #NPM_CONFIG_PREFIX = "$HOME/.npm-packages";
       };
       #  activation.createNpmPrefix = lib.hm.dag.entryAfter ["writeBoundary"] ''
