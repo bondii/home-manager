@@ -43,7 +43,7 @@ in {
         ignorecase = true;
         smartcase = true;
         signcolumn = "yes";
-        updatetime = 250;
+        updatetime = 50; # 250
         timeoutlen = 300;
         splitright = true;
         splitbelow = true;
@@ -59,6 +59,8 @@ in {
         tabstop = 2;
         smartindent = true;
         viewoptions = "folds,cursor,curdir";
+        lazyredraw = true;
+        ttyfast = true;
       };
 
       # Autocmds
@@ -107,6 +109,60 @@ in {
 
       # Keymaps
       keymaps = [
+        {
+          mode = "n";
+          key = "K";
+          action.__raw = "vim.lsp.buf.hover";
+          options.desc = "Hover";
+        }
+        # Jump to definition
+        {
+          mode = "n";
+          key = "gd";
+          action.__raw = "vim.lsp.buf.definition";
+          options.desc = "Go to definition";
+        }
+        {
+          mode = "n";
+          key = "gD";
+          # action.__raw = "vim.lsp.buf.declaration";
+          # options.desc = "Go to declaration";
+          action.__raw = "require('telescope.builtin').lsp_definitions";
+          options.desc = "Def (Tel)";
+        }
+        {
+          mode = "n";
+          key = "gy";
+          # action.__raw = "vim.lsp.buf.type_definition";
+          # options.desc = "Go to type definition";
+          action.__raw = "require('telescope.builtin').lsp_type_definitions";
+          options.desc = "Type def (Tel)";
+        }
+        {
+          mode = "n";
+          key = "gi";
+          # action.__raw = "vim.lsp.buf.implementation";
+          # options.desc = "Go to implementation";
+          action.__raw = "require('telescope.builtin').lsp_implementations";
+          options.desc = "Impl (Tel)";
+        }
+        {
+          mode = "n";
+          key = "gr";
+          # action.__raw = "vim.lsp.buf.references";
+          # options = {desc = "List references";};
+          action.__raw = "require('telescope.builtin').lsp_references";
+          options.desc = "Refs (Tel)";
+        }
+
+        # LSP Rename
+        {
+          mode = "n";
+          key = "<F2>";
+          action.__raw = "function() vim.lsp.buf.rename() end";
+          options = {desc = "LSP Rename";};
+        }
+
         # Normal: Ctrl-S saves (silent, only if changed with :update)
         {
           mode = "n";
@@ -499,6 +555,27 @@ in {
           };
         };
 
+        guess-indent.enable = true;
+        todo-comments.enable = true;
+
+        mini = {
+          enable = true;
+          modules = {
+            ai = {enable = true;};
+            #bufremove = { enable = true; };
+            #comment = { enable = true; };
+            #cursorword = { enable = true; };
+            #move = { enable = true; };
+            #pairs = { enable = true; };
+            #sessions = { enable = true; };
+            #splitjoin = { enable = true; };
+            surround = {enable = true;};
+            #tabline = { enable = true; };
+            #trailspace = { enable = true; };
+            statusline = {enable = true;};
+          };
+        };
+
         copilot-lua = {
           enable = true;
           settings = {
@@ -533,7 +610,27 @@ in {
             };
           };
         };
-      };
+
+        neoscroll = {
+          enable = true;
+          settings = {
+            easing_function = "cubic";
+            hider_cursor = true;
+            #mappings.__empty = null;
+            #mappings = ["<C-j>" "<C-k>"];
+          };
+        };
+
+        smear-cursor = {
+          enable = true;
+          settings = {
+            #hide_target_hack = true;
+            #delay_animation_start = 10;
+            min_jump = 3;
+          };
+        };
+
+      }; # END plugins
 
       extraPlugins = with pkgs.vimPlugins; [
         #vimplugin-telescope-undo-nvim
@@ -603,7 +700,7 @@ in {
           filename = { ["Dockerfile"] = "dockerfile" },
           pattern  = { ["Dockerfile%..*"] = "dockerfile" },
         })
-      '';
+      ''; # END extraConfigLua
     };
   };
 }
