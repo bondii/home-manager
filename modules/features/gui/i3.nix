@@ -108,11 +108,6 @@ in
               always = true;
             }
             {
-              command = "setxkbmap -layout se,us -option grp:caps_toggle";
-              always = true;
-              notification = false;
-            }
-            {
               command = ''i3-msg 'rename workspace "9" to ""'';
               always = false;
             }
