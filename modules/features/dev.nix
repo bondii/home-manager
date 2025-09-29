@@ -48,8 +48,13 @@ in
       terraform
       google-cloud-sdk
       gcp_python
-      python312Packages.keyrings-google-artifactregistry-auth
-      python313Packages.keyrings-google-artifactregistry-auth
+
+      # Use this for installing python packages from GCP Artifact Registry
+      (pkgs.writeShellScriptBin "poetry-gar" ''
+        export POETRY_HTTP_BASIC_GCP_ARTIFACT_REGISTRY_USERNAME=oauth2accesstoken
+        export POETRY_HTTP_BASIC_GCP_ARTIFACT_REGISTRY_PASSWORD="$(${pkgs.google-cloud-sdk}/bin/gcloud auth application-default print-access-token)"
+        exec ${pkgs.poetry}/bin/poetry "$@"
+      '')
     ];
 
     home = {
@@ -59,7 +64,6 @@ in
       ];
       sessionVariables = {
         PYTHON_KEYRING_BACKEND = "keyrings.google_artifactregistry_auth.GoogleArtifactRegistryKeyring";
-        #LD_LIBRARY_PATH = "${pkgs.glibc}/lib:${pkgs.stdenv.cc.cc.lib}/lib:${pkgs.zlib}/lib${"\${LD_LIBRARY_PATH:+:\${LD_LIBRARY_PATH}}"}";
         #NPM_CONFIG_PREFIX = "$HOME/.npm-packages";
       };
       #  activation.createNpmPrefix = lib.hm.dag.entryAfter ["writeBoundary"] ''
@@ -67,18 +71,14 @@ in
       #  '';
     };
 
-    xdg.configFile."pypoetry/config.toml".text = ''
-      [virtualenvs]
-      in-project = true
-      create = true
-      prefer-active-python = true
-
-      [virtualenvs.options]
-      system-site-packages = true
-    '';
-
     programs.poetry = {
       enable = true;
       package = pkgs.poetry;
+      settings.virtualenvs = {
+        inProject = true;
+        create = true;
+        preferActivePython = true;
+        options.system-site-packages = true;
+      };
     };
   }
