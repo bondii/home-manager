@@ -450,21 +450,33 @@ in {
                   };
                 };
               };
+
+              # Don't attach to docker-compose files
+              extraOptions.on_attach.__raw = ''
+                function(client, bufnr)
+                  local name = vim.api.nvim_buf_get_name(bufnr)
+                  if name:match("docker%-compose%.ya?ml$") or name:match("compose%.ya?ml$") then
+                    client.stop()
+                  end
+                end
+              '';
             };
 
             docker_compose_language_service.enable = lib.mkForce false;
             dockerls = {
               enable = true;
 
-              filetypes = ["dockerfile" "yaml" "json" "hcl"];
-              #rootDir.__raw = ''
-              #  require("lspconfig.util").root_pattern(
-              #    "compose.yaml", "compose.yml",
-              #    "docker-compose.yaml", "docker-compose.yml",
-              #    "docker-bake.hcl", "docker-bake.json",
-              #    "Dockerfile", ".git"
-              #  )
-              #'';
+              filetypes = ["dockerfile" "json" "hcl"];
+              rootMarkers = [
+                "compose.yaml"
+                "compose.yml"
+                "docker-compose.yaml"
+                "docker-compose.yml"
+                "docker-bake.hcl"
+                "docker-bake.json"
+                "Dockerfile"
+                ".git"
+              ];
             };
           }; # END servers
         }; # END lsp
