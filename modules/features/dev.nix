@@ -42,12 +42,18 @@ in
       stdenv.cc.cc.lib
       glibc
       zlib
+      krb5
+
+      postgresql
+      libpq
+      openssl
       # END rnd dev deps
 
       docker
       terraform
       google-cloud-sdk
       gcp_python
+      mqtt-explorer
 
       # Use this for installing python packages from GCP Artifact Registry
       (pkgs.writeShellScriptBin "poetry-gar" ''
