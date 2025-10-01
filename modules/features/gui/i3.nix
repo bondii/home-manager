@@ -100,7 +100,7 @@ in
             }
             {
               command = "xfce4-clipman";
-              always = true;
+              always = false;
               notification = false;
             }
             {
