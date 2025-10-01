@@ -14,6 +14,10 @@
     ps.setuptools
     ps.wheel
   ]);
+  #pgdb-instance-dev = "ship2shore-dev:europe-north1:maritime-instance";
+  #pgdb-instance-prod = "ship2shore-prod:europe-north1:maritime-instance";
+  #pgdb-port-dev = 5433;
+  #pgdb-port-prod = 5434;
 in
   lib.mkIf cfg.dev {
     home.packages = with pkgs; [
@@ -54,6 +58,8 @@ in
       google-cloud-sdk
       gcp_python
       mqtt-explorer
+      pgadmin4-desktopmode
+      postgresql
 
       # Use this for installing python packages from GCP Artifact Registry
       (pkgs.writeShellScriptBin "poetry-gar" ''
@@ -75,6 +81,11 @@ in
       #  activation.createNpmPrefix = lib.hm.dag.entryAfter ["writeBoundary"] ''
       #    mkdir -p "$HOME/.npm-packages/bin""
       #  '';
+
+      file.".pgadmin/config_local.py".text = ''
+        MASTER_PASSWORD_REQUIRED = True
+        UPGRADE_CHECK_ENABLED = False
+      '';
     };
 
     programs.poetry = {
