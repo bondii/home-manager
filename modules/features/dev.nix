@@ -5,6 +5,20 @@
   ...
 }: let
   cfg = config.pontus.features;
+
+  postgresqlMajor = lib.versions.major pkgs.postgresql.version;
+  homeDir = config.home.homeDirectory;
+  pgadminPackage = pkgs.pgadmin4-desktopmode;
+  # Ensure pgAdmin sees ~/.pgadmin/config_local.py.
+  pgadminWrapped = pkgs.symlinkJoin {
+    name = "pgadmin4-wrapped";
+    paths = [pgadminPackage];
+    buildInputs = [pkgs.makeWrapper];
+    postBuild = ''
+      wrapProgram "$out/bin/pgadmin4" \
+        --prefix PYTHONPATH : ${homeDir}/.pgadmin
+    '';
+  };
 in
   lib.mkIf cfg.dev {
     home.packages = with pkgs; [
@@ -49,6 +63,8 @@ in
       python313
       kubernetes-helm
 
+      pgadminWrapped
+
       devenv
     ];
 
@@ -63,6 +79,19 @@ in
       #  activation.createNpmPrefix = lib.hm.dag.entryAfter ["writeBoundary"] ''
       #    mkdir -p "$HOME/.npm-packages/bin""
       #  '';
+
+      file.".pgadmin/config_local.py".text = ''
+        MASTER_PASSWORD_REQUIRED = True
+        UPGRADE_CHECK_ENABLED = False
+        DEFAULT_BINARY_PATHS = {
+          "pg": "${pkgs.postgresql}/bin",
+          "pg-${postgresqlMajor}": "${pkgs.postgresql}/bin",
+        }
+        FIXED_BINARY_PATHS = {
+          "pg": "${pkgs.postgresql}/bin",
+          "pg-${postgresqlMajor}": "${pkgs.postgresql}/bin",
+        }
+      '';
 
       file = {
         ".config/ENVRC_EXAMPLE" = {
