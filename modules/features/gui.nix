@@ -106,6 +106,7 @@ in {
         opacity-rule = [
           "100:class_g = 'i3lock'"
           "100:class_g = 'XSecureLock'"
+          "80:class_g = 'Rofi' && focused"
         ];
 
         detect-rounded-corners = true;
@@ -114,8 +115,6 @@ in {
         rounded-corners-exclude = [
           "window_type = 'dock'"
           "window_type = 'desktop'"
-          "class_g = 'Rofi'"
-          "class_g = 'rofi'"
           "class_g = 'mpv'"
           "class_g = 'feh'"
           "name = 'Picture-in-Picture'"
@@ -123,7 +122,7 @@ in {
 
         shadow = true;
         shadow-radius = 16;
-        shadow-opacity = 0.30;
+        shadow-opacity = 0.35;
         frame-opacity = 0.90;
         inactive-opacity = 0.9;
         wintypes = {

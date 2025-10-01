@@ -120,8 +120,8 @@ in
           workspaceAutoBackAndForth = true;
 
           gaps = {
-            inner = 5;
-            outer = -2;
+            inner = 10;
+            outer = -11;
             smartGaps = true;
             smartBorders = "on";
           };
