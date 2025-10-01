@@ -81,6 +81,9 @@ in {
         term = "xterm-kitty";
         dynamic_background_opacity = "yes";
       };
+      keybindings = {
+        "ctrl+shift+n" = "new_os_window_with_cwd";
+      };
     };
 
     programs.rofi = {
