@@ -26,6 +26,8 @@ in {
           pavucontrol
           btop
           htop
+
+          spotify
         ];
       };
 
