@@ -14,7 +14,7 @@
 
   lockPixel = pkgs.writeShellScriptBin "lock-pixel" ''
     set -euo pipefail
-    down=16
+    down=40
     up=$((10000 / down))
     tmpbg="$(mktemp -p /run/user/$UID --suffix=.png)"
 
