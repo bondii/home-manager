@@ -352,6 +352,7 @@ in {
 
       # Tema
       colorschemes.tokyonight.enable = true;
+      colorschemes.tokyonight.settings.style = "night";
       colorscheme = "tokyonight-night";
 
       plugins = {

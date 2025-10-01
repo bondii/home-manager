@@ -5,8 +5,18 @@
   ...
 }: let
   cfg = config.pontus.features;
+  #currentTheme = pkgs.base16-schemes + "/share/themes/synth-midnight-dark.yaml";
   currentTheme = pkgs.base16-schemes + "/share/themes/horizon-terminal-dark.yaml";
+  #currentTheme = pkgs.base16-schemes + "/share/themes/darkviolet.yaml";
+
+  #currentTheme = pkgs.base16-schemes + "/share/themes/ia-dark.yaml";
   #currentTheme = pkgs.base16-schemes + "/share/themes/catppuccin-mocha.yaml";
+
+  #currentTheme = pkgs.base16-schemes + "/share/themes/ayu-dark.yaml";
+  #currentTheme = pkgs.base16-schemes + "/share/themes/hardhacker.yaml";
+  #currentTheme = pkgs.base16-schemes + "/share/themes/horizon-dark.yaml";
+
+  #currentTheme = pkgs.base16-schemes + "/share/themes/encom.yaml";
 
   stylixFonts = {
     serif = {
@@ -40,6 +50,12 @@ in
         autoEnable = true;
         base16Scheme = currentTheme;
         polarity = "dark";
+
+        #cursor = {
+        #  package = pkgs.bibata-cursor-theme;
+        #  name = "Bibata-Modern-Ice";
+        #  size = 24;
+        #};
 
         opacity = {
           applications = 1.0;
