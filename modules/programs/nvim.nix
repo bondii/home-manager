@@ -550,6 +550,7 @@ in {
               lua = ["stylua"];
               terraform = ["terraform_fmt"];
               dockerfile = ["dockfmt"];
+              python = ["black" "ruff"];
             };
           };
         };
@@ -747,7 +748,7 @@ in {
           tsx        = { "eslint_d" },
           jsx        = { "eslint_d" },
           lua        = { "luacheck" },
-          python     = { "ruff" },
+          python     = { "flake8", "ruff", "mypy" },
           nix        = { "statix", "deadnix" },
           sh         = { "shellcheck" },
           bash       = { "shellcheck" },
