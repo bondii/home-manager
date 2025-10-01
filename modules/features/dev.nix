@@ -52,6 +52,7 @@ in
       docker
       terraform
       google-cloud-sdk
+      google-cloud-sql-proxy
       gcp_python
       mqtt-explorer
 
@@ -87,4 +88,31 @@ in
         options.system-site-packages = true;
       };
     };
+
+    #xdg.configFile."cloud-sql-proxy/config.toml".text = ''
+    #  instance-connection-name = "${pgdb-instance-dev}"
+    #  auto-iam-authn = true       # aktivera automatisk IAM DB-inloggning
+    #  address = "127.0.0.1"
+    #  port = ${toString pgdb-port-dev}
+    #  structured-logs = true
+    #  private-ip = true         # om instansen bara har Private IP *och* din maskin når VPC:en
+    #'';
+
+    #systemd.user.services.cloud-sql-proxy = {
+    #  Unit = {
+    #    Description = "Cloud SQL Auth Proxy (PostgreSQL)";
+    #    After = ["network-online.target"];
+    #    Wants = ["network-online.target"];
+    #  };
+    #  Service = {
+    #    # Använd konfigfilen ovan:
+    #    ExecStart = "${pkgs.google-cloud-sql-proxy}/bin/cloud-sql-proxy --config-file ${config.xdg.configHome}/cloud-sql-proxy/config.toml";
+    #    Restart = "always";
+    #    RestartSec = 2;
+    #    Environment = [
+    #      "CSQL_PROXY_STRUCTURED_LOGS=true"
+    #    ];
+    #  };
+    #  Install.WantedBy = ["default.target"];
+    #};
   }
