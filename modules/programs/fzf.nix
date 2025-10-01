@@ -13,9 +13,13 @@
     # nf ("nvim file"): Fuzzy find file; open in Neovim
     (pkgs.writeShellScriptBin "nf" ''
       set -euo pipefail
+      query="''${1:-}"
+      if [ "$#" -gt 0 ]; then
+        shift
+      fi
       file="$(
-        fd --type f --hidden --exclude .git \
-        | fzf --preview 'bat --style=numbers --color=always --line-range=:200 {}'
+        fd --type f --hidden --exclude .git "$@" \
+        | fzf --query "''${query}" --preview 'bat --style=numbers --color=always --line-range=:200 {}'
       )" || exit 0
       exec nvim "$file"
     '')
@@ -25,16 +29,30 @@
       #!/usr/bin/env bash
       # Interactive content search -> open in Neovim at match
       set -euo pipefail
-      dir="''${1:-.}"
+      dir="."
+      query=""
+
+      if (($# > 0)) && [ -d "$1" ]; then
+        dir="$1"
+        shift
+      fi
+
+      query="''${*}"
+
+      reloadCmd="rg --vimgrep -F --smart-case --hidden --glob '!.git' --no-messages --color=never -- {q} \"''${dir}\" | cut -d: -f1-3 || true"
+      binds="change:reload:''${reloadCmd}"
+      if [ -n "''${query}" ]; then
+        binds="start:reload:''${reloadCmd},''${binds}"
+      fi
 
       # fzf runs with an empty list first; on each keystroke (change),
       # we reload results from ripgrep using the current query {q}.
       # We show file:line:col:text and preview the match with context.
       selection="$(
         FZF_DEFAULT_OPTS="--height=80% --layout=reverse --border" \
-        fzf --ansi --disabled --query "" \
+        fzf --ansi --disabled --query "''${query}" \
           --prompt="rg> " \
-           --bind "change:reload:rg --vimgrep -F --smart-case --hidden --glob '!.git' --no-messages --color=never -- {q} ''${dir} | cut -d: -f1-3 || true" \
+           --bind "''${binds}" \
            --delimiter=":" \
            --with-nth=1,2,3 \
            --nth=1,2,3 \
@@ -57,12 +75,18 @@
     # nfg ("nvim file grep"): Fuzzy search file content; open file picker of results; open in Neovim
     (pkgs.writeShellScriptBin "nfg" ''
       set -euo pipefail
-      printf "grep: "
-      IFS= read -r q
-      [ -z "$q" ] && exit 0
+      query="''${1:-}"
+      if [ -n "''${query}" ]; then
+        printf "grep: %s\n" "''${query}"
+      else
+        printf "grep: "
+        IFS= read -r query
+      fi
+      [ -z "''${query}" ] && exit 0
+      export QUERY="''${query}"
       file="$(
-        rg -l --no-messages -- "$q" \
-        | fzf --preview "rg --pretty --context 5 -- '$q' {}"
+        rg -l --no-messages -- "$QUERY" \
+        | fzf --preview 'rg --pretty --context 5 -- "$QUERY" {}'
       )" || exit 0
       exec nvim "$file"
     '')
