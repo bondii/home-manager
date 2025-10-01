@@ -47,8 +47,8 @@ in {
         timeoutlen = 300;
         splitright = true;
         splitbelow = true;
-        list = true;
-        listchars = "tab:» ,trail:·,nbsp:␣";
+        #list = true;
+        #listchars = "tab:» ,trail:·,nbsp:␣";
         inccommand = "split";
         cursorline = true;
         scrolloff = 5;
@@ -128,7 +128,7 @@ in {
           # action.__raw = "vim.lsp.buf.declaration";
           # options.desc = "Go to declaration";
           action.__raw = "require('telescope.builtin').lsp_definitions";
-          options.desc = "Def (Tel)";
+          options.desc = "Definition";
         }
         {
           mode = "n";
@@ -136,7 +136,7 @@ in {
           # action.__raw = "vim.lsp.buf.type_definition";
           # options.desc = "Go to type definition";
           action.__raw = "require('telescope.builtin').lsp_type_definitions";
-          options.desc = "Type def (Tel)";
+          options.desc = "Type def";
         }
         {
           mode = "n";
@@ -144,7 +144,7 @@ in {
           # action.__raw = "vim.lsp.buf.implementation";
           # options.desc = "Go to implementation";
           action.__raw = "require('telescope.builtin').lsp_implementations";
-          options.desc = "Impl (Tel)";
+          options.desc = "Implementation";
         }
         {
           mode = "n";
@@ -422,7 +422,6 @@ in {
         };
 
         nvim-autopairs.enable = true;
-        indent-blankline.enable = true;
 
         neo-tree.enable = true;
         lint.enable = true;
@@ -565,6 +564,7 @@ in {
             #bufremove = { enable = true; };
             #comment = { enable = true; };
             #cursorword = { enable = true; };
+            #indentscope = {enable = true;};
             #move = { enable = true; };
             #pairs = { enable = true; };
             #sessions = { enable = true; };
@@ -573,6 +573,60 @@ in {
             #tabline = { enable = true; };
             #trailspace = { enable = true; };
             statusline = {enable = true;};
+          };
+        };
+
+        hlchunk = {
+          enable = true;
+          settings = {
+            blank = {
+              enable = false;
+              chars = [" "];
+              style = [
+                {bg = "#434437";}
+                {bg = "#2f4440";}
+                {bg = "#433054";}
+                {bg = "#284251";}
+              ];
+            };
+            chunk = {
+              enable = true;
+              use_treesitter = true;
+              #style.fg = "#91bef0";
+              max_file_size = 10 * 1024 * 1024;
+              chars = {
+                horizontal_line = "─";
+                left_bottom = "╰";
+                left_top = "╭";
+                right_arrow = "─";
+                vertical_line = "│";
+              };
+              exclude_filetypes = {
+                lazyterm = true;
+                neo-tree = true;
+              };
+            };
+            indent = {
+              enable = true;
+              chars = ["│"];
+              exclude_filetypes = {
+                lazyterm = true;
+                neo-tree = true;
+              };
+              #style.fg = "#45475a";
+              style = [
+                "#434437"
+                "#2f4440"
+                "#433054"
+                "#284251"
+              ];
+              use_treesitter = false;
+            };
+            line_num = {
+              enable = true;
+              use_treesitter = true;
+              #style = "#91bef0";
+            };
           };
         };
 
@@ -630,6 +684,33 @@ in {
           };
         };
 
+        #rainbow.enable = true;
+        rainbow-delimiters.enable = true;
+
+        twilight = {
+          enable = true;
+          settings = {
+            dimming = {
+              alpha = 0.55; # amount of dimming
+              # Try to get the foreground from the highlight groups or fallback color
+              color = ["Normal" "#ffffff"];
+              term_bg = "#000000"; # if guibg=NONE, this will be used to calculate text color
+              inactive = false; # when true, other windows will be fully dimmed (unless they contain the same buffer)
+            };
+            context = 10; # amount of lines we will try to show around the current lineb
+            treesitter = true; # use treesitter when available for the filetype
+            # treesitter is used to automatically expand the visible text,
+            # but you can further control the types of nodes that should always be fully expanded
+            expand = [
+              # for treesitter, we we always try to expand to the top-most ancestor with these types
+              "function"
+              "method"
+              "table"
+              "if_statement"
+            ];
+            exclude = []; # exclude these filetypes
+          };
+        };
       }; # END plugins
 
       extraPlugins = with pkgs.vimPlugins; [
