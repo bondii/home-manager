@@ -261,6 +261,13 @@ in {
           action = "<C-w><C-k>";
           options.desc = "Win up";
         }
+        {
+          mode = "n";
+          key = "<C-n>";
+          action = "<cmd>Neotree toggle<CR>";
+          options.desc = "Toggle file tree";
+          options.silent = true;
+        }
         #{ mode = "i"; key = "jk"; action = "<Esc>"; options.silent = true; }
 
         # Telescope binds
@@ -429,7 +436,24 @@ in {
 
         nvim-autopairs.enable = true;
 
-        neo-tree.enable = true;
+        neo-tree = {
+          enable = true;
+          closeIfLastWindow = true;
+          filesystem = {
+            bindToCwd = false;
+            followCurrentFile = {
+              enabled = true;
+            };
+            useLibuvFileWatcher = true;
+          };
+          window = {
+            width = 32;
+            mappings = {
+              "<space>" = "none";
+            };
+          };
+        };
+
         lint.enable = true;
         dap.enable = true;
 
