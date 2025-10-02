@@ -19,6 +19,12 @@ in {
       hadolint # Dockerfile linter
       dockfmt
       yamllint
+      jq
+      nodePackages.prettier
+      shfmt
+      stylua
+      black
+      ruff
     ];
 
     programs.nixvim = {
@@ -551,6 +557,24 @@ in {
               terraform = ["terraform_fmt"];
               dockerfile = ["dockfmt"];
               python = ["black" "ruff"];
+              json = ["prettierd" "prettier"];
+              jsonc = ["prettierd" "prettier"];
+              javascript = ["prettierd" "prettier"];
+              javascriptreact = ["prettierd" "prettier"];
+              typescript = ["prettierd" "prettier"];
+              typescriptreact = ["prettierd" "prettier"];
+              html = ["prettierd" "prettier"];
+              css = ["prettierd" "prettier"];
+              scss = ["prettierd" "prettier"];
+              less = ["prettierd" "prettier"];
+              yaml = ["prettierd" "prettier"];
+              markdown = ["prettierd" "prettier"];
+              sh = ["shfmt"];
+              bash = ["shfmt"];
+              zsh = ["shfmt"];
+            };
+            formatters = {
+              shfmt.prepend_args = ["-i" "2" "-ci"];
             };
           };
         };
