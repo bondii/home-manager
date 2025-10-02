@@ -356,7 +356,7 @@ in {
 
         {
           mode = "n";
-          key = "<leader>u>";
+          key = "<leader>u";
           action = "<cmd>UndotreeToggle<CR>";
           options.desc = "Undo tree";
         }
@@ -457,7 +457,13 @@ in {
         lint.enable = true;
         dap.enable = true;
 
-        undotree.enable = true;
+        undotree = {
+          enable = true;
+          settings = {
+            DiffAutoOpen = true;
+            SetFocusWhenToggle = true;
+          };
+        };
 
         luasnip.enable = true;
         friendly-snippets.enable = true;
