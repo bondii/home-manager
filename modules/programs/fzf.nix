@@ -39,7 +39,7 @@
 
       query="''${*}"
 
-      reloadCmd="rg --vimgrep -F --smart-case --hidden --glob '!.git' --no-messages --color=never -- {q} \"''${dir}\" | cut -d: -f1-3 || true"
+      reloadCmd="rg --vimgrep -F --smart-case --hidden --glob '!.git' --no-messages --color=never -- {q} \"''${dir}\" || true"
       binds="change:reload:''${reloadCmd}"
       if [ -n "''${query}" ]; then
         binds="start:reload:''${reloadCmd},''${binds}"
@@ -47,24 +47,24 @@
 
       # fzf runs with an empty list first; on each keystroke (change),
       # we reload results from ripgrep using the current query {q}.
-      # We show file:line:col and preview the focused match with context.
+      # We show right-aligned file:line:col + match text (with highlights) and preview the focused match with context.
       selection="$(
         FZF_DEFAULT_OPTS="--height=80% --layout=reverse --border" \
         fzf --ansi --disabled --query "''${query}" \
           --prompt="rg> " \
            --bind "''${binds}" \
            --delimiter=":" \
-           --with-nth=1,2,3 \
-           --nth=1,2,3 \
-          --preview "bash -c 'q=\$1; file=\$2; line=\$3; if [ -z \"\$q\" ] || [ ! -f \"\$file\" ]; then exit 0; fi; case \"\$line\" in (\"\"|*[!0-9]*) exit 0;; esac; lineNr=\$((10#\$line)); context=5; start=\$((lineNr - context)); if (( start < 1 )); then start=1; fi; end=\$((lineNr + context)); bat --style=numbers --color=always --line-range \"\$start:\$end\" --highlight-line \"\$lineNr\" \"\$file\" | rg --passthru --color=always -F --smart-case -- \"\$q\" || true' preview {q} {1} {2}" \
+           --with-nth=1,2,3,4.. \
+           --nth=1,2,3,4.. \
+          --preview "bash -c 'q=\$1; file=\$2; rawLine=\$3; if [ -z \"\$q\" ] || [ ! -f \"\$file\" ]; then exit 0; fi; lineDigits=\$(printf \"%s\" \"\$rawLine\" | tr -cd \"0-9\"); [ -z \"\$lineDigits\" ] && exit 0; lineNr=\$((10#\$lineDigits)); context=5; start=\$((lineNr - context)); if (( start < 1 )); then start=1; fi; end=\$((lineNr + context)); bat --style=numbers --color=always --line-range \"\$start:\$end\" --highlight-line \"\$lineNr\" \"\$file\" | rg --passthru --color=always -F --smart-case -- \"\$q\" || true' preview {q} {1} {2}" \
           --preview-window 'up,60%,border-bottom,wrap' \
           --pointer="➤" --marker="✓"
       )" || exit 0
 
       # Selection format: file:line:col:matchtext
       file="$(printf %s "''${selection}" | cut -d: -f1)"
-      line="$(printf %s "''${selection}" | cut -d: -f2)"
-      col="$(printf  %s "''${selection}" | cut -d: -f3)"
+      line="$(printf %s "''${selection}" | cut -d: -f2 | sed 's/^[[:space:]]*//')"
+      col="$(printf %s "''${selection}" | cut -d: -f3 | sed 's/^[[:space:]]*//')"
 
       [ -n "''${file}" ] || exit 0
 
