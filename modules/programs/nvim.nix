@@ -538,6 +538,17 @@ in {
                 "Dockerfile"
                 ".git"
               ];
+              extraOptions.on_attach.__raw = ''
+                function(client, bufnr)
+                  local ft = vim.bo[bufnr].filetype
+                  if ft == "json" or ft == "hcl" then
+                    local name = vim.api.nvim_buf_get_name(bufnr)
+                    if not name:match("docker%-bake%.json$") and not name:match("docker%-bake%.hcl$") then
+                      client.stop()
+                    end
+                  end
+                end
+              '';
             };
           }; # END servers
         }; # END lsp
