@@ -64,6 +64,8 @@ in {
         xss-lock
         xfce.xfce4-clipman-plugin
         redshift
+        libreoffice
+        gimp
       ]
       ++ lib.optionals cfg.fonts [
         nerd-fonts.jetbrains-mono
