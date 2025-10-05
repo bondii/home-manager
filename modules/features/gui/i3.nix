@@ -193,6 +193,7 @@ in
             "${M}+Ctrl+Right" = "workspace next";
             "${M}+Ctrl+Left" = "workspace prev";
             "${M}+Shift+b" = "move container to workspace back_and_forth; workspace back_and_forth";
+            "${M}+Tab" = "workspace back_and_forth";
 
             "${M}+Shift+1" = "move container to workspace number 1";
             "${M}+Shift+2" = "move container to workspace number 2";
