@@ -39,8 +39,6 @@ in {
 
       # Autosuggestions: Accept with Ctrl+Space
       bindkey '^ ' autosuggest-accept
-
-      setxkbmap -layout se,us -option grp:caps_toggle
     '';
   };
 

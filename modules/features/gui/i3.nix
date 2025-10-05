@@ -53,6 +53,9 @@ in
 
     xsession = {
       enable = true;
+      initExtra = ''
+        ${pkgs.xorg.setxkbmap}/bin/setxkbmap -layout se,us -option grp:caps_toggle
+      '';
       windowManager.i3 = {
         enable = true;
         package = pkgs.i3-gaps;
