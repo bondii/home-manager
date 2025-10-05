@@ -5,15 +5,6 @@
   ...
 }: let
   cfg = config.pontus.features;
-
-  gcp_python = pkgs.python312.withPackages (ps: [
-    ps.keyring
-    ps.keyrings-google-artifactregistry-auth
-    ps.google-auth
-    ps.pip
-    ps.setuptools
-    ps.wheel
-  ]);
 in
   lib.mkIf cfg.dev {
     home.packages = with pkgs; [
@@ -52,41 +43,49 @@ in
       docker
       terraform
       (google-cloud-sdk.withExtraComponents [google-cloud-sdk.components.gke-gcloud-auth-plugin])
-      gcp_python
       mqtt-explorer
       kubectl
+      python313
 
-      # Use this for installing python packages from GCP Artifact Registry
-      (pkgs.writeShellScriptBin "poetry-gar" ''
-        export POETRY_HTTP_BASIC_GCP_ARTIFACT_REGISTRY_USERNAME=oauth2accesstoken
-        export POETRY_HTTP_BASIC_GCP_ARTIFACT_REGISTRY_PASSWORD="$(${pkgs.google-cloud-sdk}/bin/gcloud auth application-default print-access-token)"
-        exec ${pkgs.poetry}/bin/poetry "$@"
-      '')
+      devenv
     ];
 
     home = {
       sessionPath = [
-        "${gcp_python}/bin"
         #"$HOME/.npm-packages/bin"
       ];
       sessionVariables = {
-        PYTHON_KEYRING_BACKEND = "keyrings.google_artifactregistry_auth.GoogleArtifactRegistryKeyring";
         #NPM_CONFIG_PREFIX = "$HOME/.npm-packages";
         USE_GKE_GCLOUD_AUTH_PLUGIN = "True";
       };
       #  activation.createNpmPrefix = lib.hm.dag.entryAfter ["writeBoundary"] ''
       #    mkdir -p "$HOME/.npm-packages/bin""
       #  '';
-    };
 
-    programs.poetry = {
-      enable = true;
-      package = pkgs.poetry;
-      settings.virtualenvs = {
-        inProject = true;
-        create = true;
-        preferActivePython = true;
-        options.system-site-packages = true;
+      file = {
+        ".config/ENVRC_EXAMPLE" = {
+          text = ''
+            #! /bin/bash .envrc
+            export DEVENV_IN_DIRENV_SHELL=true
+
+            watch_file flake.nix
+            watch_file flake.lock
+            if ! use flake . --no-pure-eval; then
+              echo "devenv could not be built. The devenv environment was not loaded. Make the necessary changes to devenv.nix and hit enter to try again." >&2
+            fi
+          '';
+        };
       };
     };
+
+    # programs.poetry = {
+    #   enable = true;
+    #   package = pkgs.poetry;
+    #   settings.virtualenvs = {
+    #     inProject = true;
+    #     create = true;
+    #     preferActivePython = true;
+    #     options.system-site-packages = true;
+    #   };
+    # };
   }
