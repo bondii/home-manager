@@ -51,9 +51,10 @@ in
 
       docker
       terraform
-      google-cloud-sdk
+      (google-cloud-sdk.withExtraComponents [google-cloud-sdk.components.gke-gcloud-auth-plugin])
       gcp_python
       mqtt-explorer
+      kubectl
 
       # Use this for installing python packages from GCP Artifact Registry
       (pkgs.writeShellScriptBin "poetry-gar" ''
@@ -71,6 +72,7 @@ in
       sessionVariables = {
         PYTHON_KEYRING_BACKEND = "keyrings.google_artifactregistry_auth.GoogleArtifactRegistryKeyring";
         #NPM_CONFIG_PREFIX = "$HOME/.npm-packages";
+        USE_GKE_GCLOUD_AUTH_PLUGIN = "True";
       };
       #  activation.createNpmPrefix = lib.hm.dag.entryAfter ["writeBoundary"] ''
       #    mkdir -p "$HOME/.npm-packages/bin""
