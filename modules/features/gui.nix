@@ -149,6 +149,19 @@ in {
       inactiveInterval = 10;
       xss-lock.extraOptions = ["--transfer-sleep-lock"];
     };
+    systemd.user.services.xss-lock = {
+      Unit = {
+        After = ["graphical-session.target"];
+        PartOf = ["graphical-session.target"];
+      };
+      Service = {
+        Environment = [
+          "DISPLAY=:0"
+          "XAUTHORITY=%h/.Xauthority"
+        ];
+        #Restart = "on-failure";
+      };
+    };
 
     services.redshift = {
       enable = true;
