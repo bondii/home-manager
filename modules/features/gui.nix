@@ -25,6 +25,12 @@
     rm -f "$tmpbg"
   '';
 
+  emojiPicker = pkgs.writeShellScriptBin "emoji-picker" ''
+    set -euo pipefail
+
+    ${pkgs.rofimoji}/bin/rofimoji --selector rofi --action type "$@"
+  '';
+
   lockCommandDefault = "${lockPixel}/bin/lock-pixel";
 in {
   options.pontus.gui = {
@@ -51,6 +57,7 @@ in {
         maim
         imagemagick
         lockPixel
+        emojiPicker
 
         xterm
         brightnessctl
@@ -61,6 +68,8 @@ in {
         blueman
         networkmanagerapplet
         libnotify
+        rofimoji
+        xdotool
         xss-lock
         xfce.xfce4-clipman-plugin
         redshift
