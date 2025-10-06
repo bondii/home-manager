@@ -46,6 +46,7 @@ in
       mqtt-explorer
       kubectl
       python313
+      kubernetes-helm
 
       devenv
     ];
