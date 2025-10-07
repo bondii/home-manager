@@ -8,6 +8,13 @@
     package = pkgs.gitFull;
     userName = "Pontus Eriksson";
     userEmail = "pontus_eriksson@live.com";
+    delta = {
+      enable = true;
+      options = {
+        features = "side-by-side line-numbers decorations";
+        navigate = true;
+      };
+    };
 
     extraConfig = {
       push = {
@@ -18,7 +25,22 @@
         default = "current";
         autoSetupRemote = true;
       };
-      pager.branch = false;
+      diff = {
+        algorithm = "histogram";
+        colorMoved = "zebra";
+        colorMovedWS = "allow-indentation-change";
+        indentHeuristic = true;
+        renames = true;
+      };
+      merge.conflictStyle = "zdiff3";
+      pager = {
+        diff = "delta";
+        log = "delta";
+        reflog = "delta";
+        show = "delta";
+        branch = false;
+      };
+      #interactive.diffFilter = "delta --color-only";
       rerere.enabled = true;
       branch.sort = "committerdate";
     };
