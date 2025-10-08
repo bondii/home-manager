@@ -60,7 +60,7 @@ in
       google-cloud-sql-proxy
       mqtt-explorer
       kubectl
-      python313
+      python314
       kubernetes-helm
 
       pgadminWrapped
