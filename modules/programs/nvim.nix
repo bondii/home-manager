@@ -252,14 +252,28 @@ in {
         {
           mode = "n";
           key = "<C-j>";
-          action = "<C-w><C-j>";
-          options.desc = "Win down";
+          action.__raw = ''
+            function()
+              local neoscroll = require("neoscroll")
+              local lines = math.max(1, math.floor(vim.api.nvim_win_get_height(0) * 0.25))
+              neoscroll.scroll(lines, true, 150)
+            end
+          '';
+          options.desc = "Scroll down (1/4 screen)";
+          options.silent = true;
         }
         {
           mode = "n";
           key = "<C-k>";
-          action = "<C-w><C-k>";
-          options.desc = "Win up";
+          action.__raw = ''
+            function()
+              local neoscroll = require("neoscroll")
+              local lines = math.max(1, math.floor(vim.api.nvim_win_get_height(0) * 0.25))
+              neoscroll.scroll(-lines, true, 150)
+            end
+          '';
+          options.desc = "Scroll up (1/4 screen)";
+          options.silent = true;
         }
         {
           mode = "n";
