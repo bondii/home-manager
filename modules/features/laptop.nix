@@ -11,6 +11,14 @@
   cuhdHemma = "00ffffffffffff00410c04c21219000017210104b54627783be5c5ac5047a726135054230800d1c0b30095008180814081c0010101014dd000a0f0703e8030203500b9882100001a000000ff0041553032333233303036343138000000fc0050484c2033323845310a202020000000fd00303ca0a03c010a202020202020016e020320f14b0103051404131f12021190230907078301000067030c0010000078565e00a0a0a0295030203500b9882100001e023a801871382d40582c4500b9882100001e011d007251d01e206e285500b9882100001e8c0ad08a20e02d10103e9600b988210000184d6c80a070703e8030203a00b9882100001a000000000034";
   wqhdKontor = "00ffffffffffff001e6d7b9ec3200300021f0104b57822789e09c1ae5044af260e50542108007140818081c0a9c0d1c0810001010101a6780030f2385a40b0588a00ae514100001e023a801871382d40582c4500ae514100001e000000fd00303d1e873c000a202020202020000000fc004c472048445220445148440a2002a10203197144010304902309070783010000e305c000e30605014dd000a0f0703e803020650c204a3100001a286800a0f0703e800890650c204a3100001a000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000e3701279030003002845b70088ff139f002f801f009f05280002000900655a0088ff139f002f8014009f05140002000900000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000ef90";
 
+  internalConfig = {
+    enable = true;
+    primary = true;
+    mode = "1920x1200";
+    rate = "60.00";
+    position = "0x0";
+    rotate = "normal";
+  };
   uhdConfig = {
     enable = true;
     primary = true;
@@ -28,7 +36,11 @@
     rotate = "normal";
   };
 in
-  lib.mkIf cfg.laptop {
+  lib.mkIf cfg.laptop (let
+    autorandrHotplugScript = pkgs.writeShellScript "autorandr-hotplug" ''
+      ${pkgs.autorandr}/bin/autorandr --change --default mobile
+    '';
+  in {
     home.packages = with pkgs; [
       autorandr
       arandr
@@ -44,7 +56,7 @@ in
         After = ["graphical-session.target"];
       };
       Service = {
-        ExecStart = "${pkgs.xplugd}/bin/xplugd -r -c '${pkgs.bash}/bin/bash -lc \"${pkgs.autorandr}/bin/autorandr --change --default mobile\"'";
+        ExecStart = "${pkgs.xplugd}/bin/xplugd -n ${autorandrHotplugScript}";
         Restart = "on-failure";
       };
       Install.WantedBy = ["graphical-session.target"];
@@ -52,20 +64,19 @@ in
 
     programs.autorandr = {
       enable = true;
-      hooks.postswitch.notify = ''${pkgs.libnotify}/bin/notify-send "Skärmprofil" "$AUTORANDR_CURRENT_PROFILE"''; # Fill 'profiles' after reading EDID with xrandr & autorandr
+      hooks.postswitch.notify = ''${pkgs.libnotify}/bin/notify-send "Skärmprofil" "$AUTORANDR_CURRENT_PROFILE"'';
 
+      # Fill 'profiles' after reading EDID with xrandr & autorandr --fingerprint
       profiles = {
         mobile = {
           fingerprint.eDP-1 = internalDisplay;
-          config.eDP-1 = {
-            enable = true;
-            primary = true;
-            mode = "1920x1200";
-            rate = "60.00";
-            position = "0x0";
-            rotate = "normal";
+          config = {
+            eDP-1 = internalConfig;
+            DP-2.enable = false;
+            DP-9.enable = false;
+            DP-10.enable = false;
+            DP-11.enable = false;
           };
-          config.DP-9.enable = false;
         };
 
         fuhd9s = {
@@ -74,10 +85,8 @@ in
           config.eDP-1.enable = false;
         };
         fuhd9b = {
-          fingerprint = {
-            eDP-1 = internalDisplay;
-            DP-9 = fuhdHemma;
-          };
+          fingerprint.eDP-1 = internalDisplay;
+          fingerprint.DP-9 = fuhdHemma;
           config.DP-9 = uhdConfig;
           config.eDP-1.enable = false;
         };
@@ -86,10 +95,8 @@ in
           config.DP-10 = uhdConfig;
         };
         fuhd10d = {
-          fingerprint = {
-            eDP-1 = internalDisplay;
-            DP-10 = fuhdHemma;
-          };
+          fingerprint.eDP-1 = internalDisplay;
+          fingerprint.DP-10 = fuhdHemma;
           config.DP-10 = uhdConfig;
           config.eDP-1.enable = false;
         };
@@ -99,10 +106,8 @@ in
           config.DP-11 = uhdConfig;
         };
         cuhd11d = {
-          fingerprint = {
-            eDP-1 = internalDisplay;
-            DP-11 = cuhdHemma;
-          };
+          fingerprint.eDP-1 = internalDisplay;
+          fingerprint.DP-11 = cuhdHemma;
           config.DP-11 = uhdConfig;
           config.eDP-1.enable = false;
         };
@@ -112,14 +117,10 @@ in
           config.DP-2 = wqhdConfig;
         };
         wqhdKontorD = {
-          fingerprint = {
-            eDP-1 = internalDisplay;
-            DP-2 = wqhdKontor;
-          };
-          config = {
-            DP-2 = wqhdConfig;
-            eDP-1.enable = false;
-          };
+          fingerprint.eDP-1 = internalDisplay;
+          fingerprint.DP-2 = wqhdKontor;
+          config.DP-2 = wqhdConfig;
+          config.eDP-1.enable = false;
         };
       };
     };
@@ -133,4 +134,4 @@ in
         }
       ];
     };
-  }
+  })
