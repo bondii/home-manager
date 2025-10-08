@@ -93,6 +93,7 @@ in {
         dynamic_background_opacity = "yes";
       };
       keybindings = {
+        "ctrl+shift+t" = "new_tab_with_cwd";
         "ctrl+shift+n" = "new_os_window_with_cwd";
       };
     };
