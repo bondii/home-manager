@@ -353,6 +353,13 @@ in {
           action.__raw = ''function() require("conform").format({ async = true, lsp_format = "fallback" }) end'';
           options.desc = "[F]ormat buffer";
         }
+        {
+          mode = "n";
+          key = "<leader>mp";
+          action = "<cmd>MarkdownPreviewToggle<CR>";
+          options.desc = "Preview Markdown";
+          options.silent = true;
+        }
 
         {
           mode = "n";
@@ -781,6 +788,7 @@ in {
 
       extraPlugins = with pkgs.vimPlugins; [
         #vimplugin-telescope-undo-nvim
+        markdown-preview-nvim
         vim-nix
       ];
 
@@ -788,6 +796,11 @@ in {
 
       # nvim-lint-mappning + auto-run
       extraConfigLua = ''
+        -- Markdown preview plugin defaults
+        vim.g.mkdp_auto_start = 0
+        vim.g.mkdp_auto_close = 1
+        vim.g.mkdp_filetypes = { "markdown" }
+
         -- Diagnostics --
         vim.diagnostic.config({
           virtual_text = { spacing = 2, prefix = "●" },
@@ -841,6 +854,7 @@ in {
             tf = "terraform",
             tfvars = "terraform",  -- Some use  "terraform-vars", terraformls can handle either
             hcl = "hcl",
+            MD = "markdown",
           },
         })
         vim.filetype.add({
