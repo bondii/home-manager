@@ -611,7 +611,7 @@ in {
             notify_on_error = false;
             format_on_save = {
               lsp_format = "fallback";
-              timeout_ms = 500;
+              timeout_ms = 5000;
             };
             formatters_by_ft = {
               nix = ["alejandra"]; # alt: nixpkgs.nixfmt
@@ -637,6 +637,8 @@ in {
             };
             formatters = {
               shfmt.prepend_args = ["-i" "2" "-ci"];
+              prettier.timeout_ms = 5000;
+              prettierd.timeout_ms = 5000;
             };
           };
         };
