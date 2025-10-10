@@ -53,9 +53,6 @@ in
 
     xsession = {
       enable = true;
-      initExtra = ''
-        ${pkgs.xorg.setxkbmap}/bin/setxkbmap -layout se,us -option grp:caps_toggle
-      '';
       windowManager.i3 = {
         enable = true;
         package = pkgs.i3-gaps;
@@ -109,6 +106,11 @@ in
             {
               command = "feh --no-fehbg --bg-fill $HOME/pictures/wallpapers/default.jpg";
               always = true;
+            }
+            {
+              command = "setxkbmap -layout us,se -option grp:caps_toggle";
+              always = true;
+              notification = false;
             }
             {
               command = ''i3-msg 'rename workspace "9" to ""'';
