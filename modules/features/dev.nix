@@ -47,21 +47,19 @@ in
       stdenv.cc.cc.lib
       glibc
       zlib
-      krb5
 
       postgresql
       libpq
       openssl
       # END rnd dev deps
 
-      docker
-      terraform
       (google-cloud-sdk.withExtraComponents [google-cloud-sdk.components.gke-gcloud-auth-plugin])
       google-cloud-sql-proxy
       mqtt-explorer
       kubectl
       python314
       kubernetes-helm
+      uv
 
       pgadminWrapped
 

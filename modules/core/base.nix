@@ -26,6 +26,7 @@ in {
           pavucontrol
           btop
           htop
+          tree
 
           spotify
         ];

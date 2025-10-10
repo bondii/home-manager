@@ -75,6 +75,7 @@ in {
         redshift
         libreoffice
         gimp
+        xclip
       ]
       ++ lib.optionals cfg.fonts [
         nerd-fonts.jetbrains-mono
