@@ -1,8 +1,11 @@
 {
+  config,
   lib,
   pkgs,
   ...
-}: {
+}: let
+  gitIgnorePath = "${config.xdg.configHome}/git/ignore";
+in {
   programs.git = {
     enable = true;
     package = pkgs.gitFull;
@@ -108,4 +111,12 @@
       }
     ];
   };
+
+  xdg.configFile."git/ignore".text = ''
+    # Global ignore patterns applied across repositories.
+    .codex/
+    .specify/
+    AGENTS.md
+    .agents/
+  '';
 }
