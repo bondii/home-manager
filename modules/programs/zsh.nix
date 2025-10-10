@@ -46,5 +46,7 @@ in {
     nv = "nvim";
     vim = "nvim";
     vdiff = "nvim -d";
+    gs = "git status";
+    gl = "git lg";
   };
 }

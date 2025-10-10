@@ -8,6 +8,7 @@
     package = pkgs.gitFull;
     userName = "Pontus Eriksson";
     userEmail = "pontus_eriksson@live.com";
+
     delta = {
       enable = true;
       options = {
@@ -17,6 +18,22 @@
     };
 
     extraConfig = {
+      core = {
+        compression = 9;
+        whitespace = "error";
+        preloadIndex = true;
+        excludesFile = gitIgnorePath;
+      };
+      advice = {
+        addEmptyPathspec = false;
+        pushNonFastForward = false;
+        statusHints = false;
+      };
+      status = {
+        branch = true;
+        showStash = true;
+        showUntrackedFiles = true;
+      };
       push = {
         default = "current";
         autoSetupRemote = true;
@@ -24,13 +41,20 @@
       pull = {
         default = "current";
         autoSetupRemote = true;
+        rebase = true;
+      };
+      rebase = {
+        autoStash = true;
+        missingCommitsCheck = "warn";
       };
       diff = {
+        context = 3;
         algorithm = "histogram";
         colorMoved = "zebra";
         colorMovedWS = "allow-indentation-change";
         indentHeuristic = true;
         renames = true;
+        interHunkContext = 10;
       };
       merge.conflictStyle = "zdiff3";
       pager = {
@@ -40,13 +64,16 @@
         show = "delta";
         branch = false;
       };
-      #interactive.diffFilter = "delta --color-only";
+      interactive = {
+        #diffFilter = "delta --color-only";
+        singleKey = true;
+      };
       rerere.enabled = true;
       branch.sort = "committerdate";
     };
 
     aliases = {
-      lg = "log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)' --all";
+      lg = "log --all --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)'";
 
       # Git på Svenska
       ryck = "pull";
