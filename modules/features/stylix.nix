@@ -46,6 +46,11 @@ in
           terminal = 0.9;
           popups = 0.9;
         };
+        cursor = {
+          package = pkgs.lyra-cursors;
+          name = "LyraB-cursors";
+          size = 28;
+        };
         targets = lib.mkMerge [
           (lib.mkIf cfg.gui {
             gtk.enable = true;
