@@ -111,6 +111,16 @@ in
           config.DP-11 = uhdConfig;
           config.eDP-1.enable = false;
         };
+        cuhd12s = {
+          fingerprint.DP-12 = cuhdHemma;
+          config.DP-12 = uhdConfig;
+        };
+        cuhd12d = {
+          fingerprint.eDP-1 = internalDisplay;
+          fingerprint.DP-12 = cuhdHemma;
+          config.DP-12 = uhdConfig;
+          config.eDP-1.enable = false;
+        };
 
         wqhdKontorS = {
           fingerprint.DP-2 = wqhdKontor;
