@@ -21,6 +21,7 @@
       ./../modules/programs/ssh.nix
       ./../modules/programs/fzf.nix
       ./../modules/programs/starship.nix
+      ./../modules/programs/yamllint.nix
       ./../modules/features/dev.nix
       ./../modules/features/gui.nix
       ./../modules/programs/vscode.nix

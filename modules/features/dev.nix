@@ -41,6 +41,7 @@ in
       shellcheck
       golangci-lint
       markdownlint-cli
+      yamllint
       lua54Packages.luacheck
 
       # Needed for e.g. numpy
