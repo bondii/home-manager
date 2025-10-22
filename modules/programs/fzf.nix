@@ -10,8 +10,8 @@
     fzf
     bat
 
-    # nf ("nvim file"): Fuzzy find file; open in Neovim
-    (pkgs.writeShellScriptBin "nf" ''
+    # sf ("nvim search file"): Fuzzy find file; open in Neovim
+    (pkgs.writeShellScriptBin "sf" ''
       set -euo pipefail
       query="''${1:-}"
       if [ "$#" -gt 0 ]; then
@@ -24,8 +24,8 @@
       exec nvim "$file"
     '')
 
-    # ng ("nvim grep"): Fuzzy search file content with preview; open in Neovim
-    (pkgs.writeShellScriptBin "ng" ''
+    # sg ("nvim search grep"): Fuzzy search file content with preview; open in Neovim
+    (pkgs.writeShellScriptBin "sg" ''
       #!/usr/bin/env bash
       # Interactive content search -> open in Neovim at match
       set -euo pipefail
@@ -72,8 +72,8 @@
       exec nvim "+call cursor(''${line},''${col})" -- "''${file}"
     '')
 
-    # nfg ("nvim file grep"): Fuzzy search file content; open file picker of results; open in Neovim
-    (pkgs.writeShellScriptBin "nfg" ''
+    # sfg ("nvim search file grep"): Fuzzy search file content; open file picker of results; open in Neovim
+    (pkgs.writeShellScriptBin "sfg" ''
       set -euo pipefail
       query="''${1:-}"
       if [ -n "''${query}" ]; then
