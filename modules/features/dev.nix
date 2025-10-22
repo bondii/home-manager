@@ -24,7 +24,7 @@ in
     home.packages = with pkgs; [
       ripgrep
       fd
-      gcc
+      #gcc
       nodejs
       lua-language-server
       rust-analyzer
@@ -45,13 +45,13 @@ in
       lua54Packages.luacheck
 
       # Needed for e.g. numpy
-      stdenv.cc.cc.lib
-      glibc
-      zlib
+      #stdenv.cc.cc.lib
+      #glibc
+      #zlib
 
-      postgresql
-      libpq
-      openssl
+      #postgresql
+      #libpq
+      #openssl
       # END rnd dev deps
 
       (google-cloud-sdk.withExtraComponents [google-cloud-sdk.components.gke-gcloud-auth-plugin])
