@@ -32,6 +32,26 @@
   '';
 
   lockCommandDefault = "${lockPixel}/bin/lock-pixel";
+  screenshotDir = "$HOME/pictures/screenshots";
+  screenshotRegion = pkgs.writeShellScriptBin "screenshot-region" ''
+    set -euo pipefail
+    dir="${screenshotDir}"
+    mkdir -p "$dir"
+    file="$dir/screenshot-$(date '+%Y-%m-%d_%H-%M-%S').png"
+    ${pkgs.maim}/bin/maim -s "$file"
+    ${pkgs.xclip}/bin/xclip -selection clipboard -t image/png < "$file"
+    ${pkgs.libnotify}/bin/notify-send "Screenshot saved" "$file"
+  '';
+
+  screenshotFull = pkgs.writeShellScriptBin "screenshot-full" ''
+    set -euo pipefail
+    dir="${screenshotDir}"
+    mkdir -p "$dir"
+    file="$dir/screenshot-$(date '+%Y-%m-%d_%H-%M-%S').png"
+    ${pkgs.maim}/bin/maim "$file"
+    ${pkgs.xclip}/bin/xclip -selection clipboard -t image/png < "$file"
+    ${pkgs.libnotify}/bin/notify-send "Screenshot saved" "$file"
+  '';
 in {
   options.pontus.gui = {
     i3 = {
@@ -76,6 +96,8 @@ in {
         libreoffice
         gimp
         xclip
+        screenshotRegion
+        screenshotFull
       ]
       ++ lib.optionals cfg.fonts [
         nerd-fonts.jetbrains-mono

@@ -178,6 +178,8 @@ in
             "${M}+s" = "layout stacking";
             "${M}+w" = "layout tabbed";
             "${M}+e" = "layout toggle split";
+            "${M}+Shift+s" = "exec --no-startup-id screenshot-region";
+            "${M}+Ctrl+s" = "exec --no-startup-id screenshot-full";
 
             "${M}+Shift+space" = "floating toggle";
             "${M}+space" = "focus mode_toggle";
