@@ -168,6 +168,12 @@ in {
           action.__raw = "function() vim.lsp.buf.rename() end";
           options = {desc = "LSP Rename";};
         }
+        {
+          mode = ["n" "x"];
+          key = "<C-.>";
+          action.__raw = "vim.lsp.buf.code_action";
+          options.desc = "Code action";
+        }
 
         # Normal: Ctrl-S saves (silent, only if changed with :update)
         {
