@@ -12,16 +12,24 @@
     nixgl.url = "github:nix-community/nixGL";
     nixgl.inputs.nixpkgs.follows = "nixpkgs";
 
-    nixvim.url = "github:nix-community/nixvim/nixos-25.05";
-    nixvim.inputs.nixpkgs.follows = "nixpkgs";
+    #nixvim.url = "github:nix-community/nixvim/nixos-25.05";
+    nixvim.url = "github:nix-community/nixvim";
+    #nixvim.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs@{ self, nixpkgs, home-manager, stylix, nixgl, nixvim, ... }:
-    let
-      mkHome = import ./lib/mkHome.nix { inherit inputs; };
-      hostConfigs = import ./hosts/default.nix { inherit inputs mkHome; };
-    in {
-      lib.mkHome = mkHome;
-      homeConfigurations = hostConfigs;
-    };
+  outputs = inputs @ {
+    self,
+    nixpkgs,
+    home-manager,
+    stylix,
+    nixgl,
+    nixvim,
+    ...
+  }: let
+    mkHome = import ./lib/mkHome.nix {inherit inputs;};
+    hostConfigs = import ./hosts/default.nix {inherit inputs mkHome;};
+  in {
+    lib.mkHome = mkHome;
+    homeConfigurations = hostConfigs;
+  };
 }

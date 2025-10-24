@@ -382,6 +382,68 @@ in {
           options.desc = "Undo tree";
         }
         #{ mode = "n"; key = "<leader>u>"; action = "<cmd>Telescope undo<CR>"; options.desc = "Undo tree"; }
+
+        # OpenCode assistant bindings
+        {
+          mode = ["n" "x"];
+          key = "<leader>oa";
+          action.__raw = ''function() require("opencode").ask("@this: ", { submit = true }) end'';
+          options.desc = "Ask about this";
+        }
+        {
+          mode = ["n" "x"];
+          key = "<leader>os";
+          action.__raw = ''function() require("opencode").select() end'';
+          options.desc = "Select prompt";
+        }
+        {
+          mode = ["n" "x"];
+          key = "<leader>o+";
+          action.__raw = ''function() require("opencode").prompt("@this") end'';
+          options.desc = "Add this";
+        }
+        {
+          mode = "n";
+          key = "<leader>ot";
+          action.__raw = ''function() require("opencode").toggle() end'';
+          options.desc = "Toggle embedded";
+        }
+        {
+          mode = "n";
+          key = "<leader>oc";
+          action.__raw = ''function() require("opencode").command() end'';
+          options.desc = "Select command";
+        }
+        {
+          mode = "n";
+          key = "<leader>on";
+          action.__raw = ''function() require("opencode").command("session_new") end'';
+          options.desc = "New session";
+        }
+        {
+          mode = "n";
+          key = "<leader>oi";
+          action.__raw = ''function() require("opencode").command("session_interrupt") end'';
+          options.desc = "Interrupt session";
+        }
+        {
+          mode = "n";
+          key = "<leader>oA";
+          action.__raw = ''function() require("opencode").command("agent_cycle") end'';
+          options.desc = "Cycle selected agent";
+        }
+        {
+          mode = "n";
+          key = "<S-C-u>";
+          action.__raw = ''function() require("opencode").command("messages_half_page_up") end'';
+          options.desc = "Messages half page up";
+        }
+        {
+          mode = "n";
+          key = "<S-C-d>";
+          action.__raw = ''function() require("opencode").command("messages_half_page_down") end'';
+          options.desc = "Messages half page down";
+        }
       ];
 
       # Tema
@@ -459,18 +521,18 @@ in {
 
         neo-tree = {
           enable = true;
-          closeIfLastWindow = true;
-          filesystem = {
-            bindToCwd = false;
-            followCurrentFile = {
-              enabled = true;
+          settings = {
+            close_if_last_window = true;
+            filesystem = {
+              bind_to_cwd = false;
+              follow_current_file = {
+                enabled = true;
+              };
+              use_libuv_file_watcher = true;
             };
-            useLibuvFileWatcher = true;
-          };
-          window = {
-            width = 32;
-            mappings = {
-              "<space>" = "none";
+            window = {
+              width = 32;
+              mappings = {"<space>" = "none";};
             };
           };
         };
@@ -754,6 +816,23 @@ in {
           };
         };
 
+        opencode = {
+          enable = true;
+          autoLoad = true;
+          settings = {
+            auto_reload = true;
+            # port = 8080;
+          };
+        };
+
+        snacks = {
+          enable = true;
+          settings = {
+            input.enabled = true;
+            picker.enabled = true;
+          };
+        };
+
         neoscroll = {
           enable = true;
           settings = {
@@ -877,7 +956,9 @@ in {
           filename = { ["Dockerfile"] = "dockerfile" },
           pattern  = { ["Dockerfile%..*"] = "dockerfile" },
         })
+
+        vim.o.autoread = true  -- Required for OpenCode?
       ''; # END extraConfigLua
-    };
+    }; # END programs.nixvim
   };
 }

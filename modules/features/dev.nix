@@ -24,6 +24,7 @@ in
     home.packages = with pkgs; [
       ripgrep
       fd
+      lsof
       #gcc
       nodejs
       lua-language-server
