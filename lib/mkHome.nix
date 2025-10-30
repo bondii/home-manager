@@ -24,6 +24,7 @@
       ./../modules/programs/yamllint.nix
       ./../modules/features/dev.nix
       ./../modules/features/gui.nix
+      ./../modules/programs/firefox.nix
       ./../modules/programs/vscode.nix
     ]
     ++ lib.optionals (features.stylix or false) [
