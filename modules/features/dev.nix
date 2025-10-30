@@ -66,6 +66,8 @@ in
       pgadminWrapped
 
       devenv
+
+      google-chrome
     ];
 
     home = {
