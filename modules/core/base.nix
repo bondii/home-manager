@@ -3,16 +3,18 @@
   lib,
   pkgs,
   ...
-}: let
+}:
+let
   cfg = config.pontus.features;
-in {
+in
+{
   config = lib.mkMerge [
     {
       nixpkgs.config.allowUnfree = true;
       xdg.enable = true;
 
       home = {
-        sessionPath = ["${config.home.homeDirectory}/.nix-profile/bin"];
+        sessionPath = [ "${config.home.homeDirectory}/.nix-profile/bin" ];
         sessionVariables = {
           XDG_DATA_DIRS = "${config.home.homeDirectory}/.nix-profile/share:/usr/local/share:/usr/share";
         };

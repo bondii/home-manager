@@ -3,7 +3,8 @@
   pkgs,
   lib,
   ...
-}: let
+}:
+let
   sharedMaps = ''
     " ~/.config/vim/shared-maps.vim
 
@@ -33,6 +34,7 @@
     " Reload config
     nnoremap <F2> :source $MYVIMRC<CR>
   '';
-in {
+in
+{
   xdg.configFile."vim/shared-maps.vim".text = sharedMaps;
 }

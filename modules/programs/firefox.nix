@@ -2,10 +2,12 @@
   config,
   lib,
   ...
-}: let
+}:
+let
   cfg = config.pontus.features;
   desktopId = "firefox.desktop";
-in {
+in
+{
   config = lib.mkIf cfg.gui {
     programs.firefox.enable = true;
 

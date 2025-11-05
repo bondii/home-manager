@@ -4,11 +4,13 @@
   lib,
   features,
   ...
-}: let
+}:
+let
   cfg = features;
   haveNerd = cfg.fonts or false;
-in {
-  imports = lib.optionals (cfg.nixvim or false) [./vim-shared.nix];
+in
+{
+  imports = lib.optionals (cfg.nixvim or false) [ ./vim-shared.nix ];
 
   config = lib.mkIf (cfg.nixvim or false) {
     home.packages = with pkgs; [
@@ -72,14 +74,14 @@ in {
       # Autocmds
       autoCmd = [
         {
-          event = ["TextYankPost"];
+          event = [ "TextYankPost" ];
           desc = "Highlight when yanking text";
           #group = "highlight-yank";
           callback.__raw = "function() vim.hl.on_yank() end";
         }
 
         {
-          event = ["BufReadPost"];
+          event = [ "BufReadPost" ];
           desc = "Return to last cursor position";
           callback.__raw = ''
             function(args)
@@ -166,10 +168,15 @@ in {
           mode = "n";
           key = "<F2>";
           action.__raw = "function() vim.lsp.buf.rename() end";
-          options = {desc = "LSP Rename";};
+          options = {
+            desc = "LSP Rename";
+          };
         }
         {
-          mode = ["n" "x"];
+          mode = [
+            "n"
+            "x"
+          ];
           key = "<C-.>";
           action.__raw = "vim.lsp.buf.code_action";
           options.desc = "Code action";
@@ -226,7 +233,10 @@ in {
         }
 
         {
-          mode = ["n" "v"];
+          mode = [
+            "n"
+            "v"
+          ];
           key = "<Space>";
           action = "<Nop>";
           options.silent = true;
@@ -391,19 +401,28 @@ in {
 
         # OpenCode assistant bindings
         {
-          mode = ["n" "x"];
+          mode = [
+            "n"
+            "x"
+          ];
           key = "<leader>oa";
           action.__raw = ''function() require("opencode").ask("@this: ", { submit = true }) end'';
           options.desc = "Ask about this";
         }
         {
-          mode = ["n" "x"];
+          mode = [
+            "n"
+            "x"
+          ];
           key = "<leader>os";
           action.__raw = ''function() require("opencode").select() end'';
           options.desc = "Select prompt";
         }
         {
-          mode = ["n" "x"];
+          mode = [
+            "n"
+            "x"
+          ];
           key = "<leader>o+";
           action.__raw = ''function() require("opencode").prompt("@this") end'';
           options.desc = "Add this";
@@ -503,9 +522,9 @@ in {
               "dockerfile"
             ];
             highlight.enable = true;
-            highlight.additional_vim_regex_highlighting = ["ruby"];
+            highlight.additional_vim_regex_highlighting = [ "ruby" ];
             indent.enable = true;
-            indent.disable = ["ruby"];
+            indent.disable = [ "ruby" ];
           };
         };
 
@@ -538,7 +557,9 @@ in {
             };
             window = {
               width = 32;
-              mappings = {"<space>" = "none";};
+              mappings = {
+                "<space>" = "none";
+              };
             };
           };
         };
@@ -567,13 +588,17 @@ in {
             snippets.preset = "luasnip";
             completion.documentation.auto_show = false;
             sources = {
-              default = ["lsp" "path" "snippets"];
+              default = [
+                "lsp"
+                "path"
+                "snippets"
+              ];
             };
             fuzzy.implementation = "lua";
 
             keymap = {
-              "<S-CR>" = ["accept"];
-              "<S-Tab>" = ["select_next"];
+              "<S-CR>" = [ "accept" ];
+              "<S-Tab>" = [ "select_next" ];
               #"<S-Tab>" = [ "select_prev" ];
             };
           };
@@ -646,7 +671,11 @@ in {
             dockerls = {
               enable = true;
 
-              filetypes = ["dockerfile" "json" "hcl"];
+              filetypes = [
+                "dockerfile"
+                "json"
+                "hcl"
+              ];
               rootMarkers = [
                 "compose.yaml"
                 "compose.yml"
@@ -682,29 +711,72 @@ in {
               timeout_ms = 5000;
             };
             formatters_by_ft = {
-              nix = ["nixfmt"]; # provided by nixfmt-rfc-style
-              lua = ["stylua"];
-              terraform = ["terraform_fmt"];
-              dockerfile = ["dockfmt"];
-              python = ["black" "ruff"];
-              json = ["prettierd" "prettier"];
-              jsonc = ["prettierd" "prettier"];
-              javascript = ["prettierd" "prettier"];
-              javascriptreact = ["prettierd" "prettier"];
-              typescript = ["prettierd" "prettier"];
-              typescriptreact = ["prettierd" "prettier"];
-              html = ["prettierd" "prettier"];
-              css = ["prettierd" "prettier"];
-              scss = ["prettierd" "prettier"];
-              less = ["prettierd" "prettier"];
-              yaml = ["prettierd" "prettier"];
-              markdown = ["prettierd" "prettier"];
-              sh = ["shfmt"];
-              bash = ["shfmt"];
-              zsh = ["shfmt"];
+              nix = [ "nixfmt" ]; # provided by nixfmt-rfc-style
+              lua = [ "stylua" ];
+              terraform = [ "terraform_fmt" ];
+              dockerfile = [ "dockfmt" ];
+              python = [
+                "black"
+                "ruff"
+              ];
+              json = [
+                "prettierd"
+                "prettier"
+              ];
+              jsonc = [
+                "prettierd"
+                "prettier"
+              ];
+              javascript = [
+                "prettierd"
+                "prettier"
+              ];
+              javascriptreact = [
+                "prettierd"
+                "prettier"
+              ];
+              typescript = [
+                "prettierd"
+                "prettier"
+              ];
+              typescriptreact = [
+                "prettierd"
+                "prettier"
+              ];
+              html = [
+                "prettierd"
+                "prettier"
+              ];
+              css = [
+                "prettierd"
+                "prettier"
+              ];
+              scss = [
+                "prettierd"
+                "prettier"
+              ];
+              less = [
+                "prettierd"
+                "prettier"
+              ];
+              yaml = [
+                "prettierd"
+                "prettier"
+              ];
+              markdown = [
+                "prettierd"
+                "prettier"
+              ];
+              sh = [ "shfmt" ];
+              bash = [ "shfmt" ];
+              zsh = [ "shfmt" ];
             };
             formatters = {
-              shfmt.prepend_args = ["-i" "2" "-ci"];
+              shfmt.prepend_args = [
+                "-i"
+                "2"
+                "-ci"
+              ];
               prettier.timeout_ms = 5000;
               prettierd.timeout_ms = 5000;
             };
@@ -717,7 +789,9 @@ in {
         mini = {
           enable = true;
           modules = {
-            ai = {enable = true;};
+            ai = {
+              enable = true;
+            };
             #bufremove = { enable = true; };
             #comment = { enable = true; };
             #cursorword = { enable = true; };
@@ -740,7 +814,9 @@ in {
             };
             #tabline = { enable = true; };
             #trailspace = { enable = true; };
-            statusline = {enable = true;};
+            statusline = {
+              enable = true;
+            };
           };
         };
 
@@ -749,12 +825,12 @@ in {
           settings = {
             blank = {
               enable = false;
-              chars = [" "];
+              chars = [ " " ];
               style = [
-                {bg = "#434437";}
-                {bg = "#2f4440";}
-                {bg = "#433054";}
-                {bg = "#284251";}
+                { bg = "#434437"; }
+                { bg = "#2f4440"; }
+                { bg = "#433054"; }
+                { bg = "#284251"; }
               ];
             };
             chunk = {
@@ -776,7 +852,7 @@ in {
             };
             indent = {
               enable = true;
-              chars = ["│"];
+              chars = [ "│" ];
               exclude_filetypes = {
                 lazyterm = true;
                 neo-tree = true;
@@ -878,7 +954,10 @@ in {
             dimming = {
               alpha = 0.55; # amount of dimming
               # Try to get the foreground from the highlight groups or fallback color
-              color = ["Normal" "#ffffff"];
+              color = [
+                "Normal"
+                "#ffffff"
+              ];
               term_bg = "#000000"; # if guibg=NONE, this will be used to calculate text color
               inactive = false; # when true, other windows will be fully dimmed (unless they contain the same buffer)
             };
@@ -893,7 +972,7 @@ in {
               "table"
               "if_statement"
             ];
-            exclude = []; # exclude these filetypes
+            exclude = [ ]; # exclude these filetypes
           };
         };
       }; # END plugins

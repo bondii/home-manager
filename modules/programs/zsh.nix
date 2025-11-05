@@ -3,9 +3,11 @@
   lib,
   pkgs,
   ...
-}: let
+}:
+let
   cfg = config.pontus.features;
-in {
+in
+{
   programs.zsh = {
     enable = true;
     enableCompletion = true;

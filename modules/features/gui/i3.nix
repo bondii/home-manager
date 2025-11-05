@@ -3,146 +3,153 @@
   lib,
   pkgs,
   ...
-}: let
+}:
+let
   features = config.pontus.features;
   guiCfg = config.pontus.gui;
   enableI3 = (features.gui or false) && (guiCfg.i3.enable or false);
   lockCommand = config.pontus.gui.lockCommand;
 in
-  lib.mkIf enableI3 {
-    programs.i3status-rust = {
+lib.mkIf enableI3 {
+  programs.i3status-rust = {
+    enable = true;
+    bars.default = {
+      settings = {
+        #config.lib.stylix.i3status-rust.bar
+        #// {
+        #  icons.icons = "material-nf";
+        #  trayOutput = "primary";
+        #  trayPadding = 4;
+        #};
+        theme.theme = "gruvbox-dark";
+        icons.icons = "material-nf";
+        trayOutput = "primary";
+        trayPadding = 4;
+      };
+      blocks = [
+        {
+          block = "cpu";
+          interval = 1;
+        }
+        {
+          block = "memory";
+          format = " $icon $mem_used_percents ";
+          format_alt = " $icon $swap_used_percents ";
+        }
+        {
+          block = "battery";
+          format = " $icon $percentage ";
+          charging_format = " $icon $percentage ";
+          full_format = " $icon 100% ";
+        }
+        { block = "sound"; }
+        {
+          block = "time";
+          interval = 60;
+          format = " $timestamp.datetime(f:'%d/%m %R') ";
+        }
+      ];
+    };
+  };
+
+  xsession = {
+    enable = true;
+    windowManager.i3 = {
       enable = true;
-      bars.default = {
-        settings = {
-          #config.lib.stylix.i3status-rust.bar
-          #// {
-          #  icons.icons = "material-nf";
-          #  trayOutput = "primary";
-          #  trayPadding = 4;
-          #};
-          theme.theme = "gruvbox-dark";
-          icons.icons = "material-nf";
-          trayOutput = "primary";
-          trayPadding = 4;
+      package = pkgs.i3-gaps;
+      config = {
+        modifier = "Mod1";
+        terminal = "kitty-gl";
+
+        window = {
+          border = 1;
+          hideEdgeBorders = "smart";
+          titlebar = false;
+          commands = [
+            {
+              criteria = {
+                title = "alsamixer";
+              };
+              command = "floating enable, border pixel 1";
+            }
+            {
+              criteria = {
+                class = "Pavucontrol";
+              };
+              command = "floating enable";
+            }
+          ];
         };
-        blocks = [
+
+        floating.modifier = "Mod1";
+
+        bars = [
+          #(
           {
-            block = "cpu";
-            interval = 1;
+            position = "bottom";
+            statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs ${config.xdg.configHome}/i3status-rust/config-default.toml";
+          }
+          #// config.stylix.targets.i3.exportedBarConfig)
+        ];
+
+        startup = [
+          {
+            command = "nm-applet";
+            always = true;
+            notification = false;
           }
           {
-            block = "memory";
-            format = " $icon $mem_used_percents ";
-            format_alt = " $icon $swap_used_percents ";
+            command = "blueman-applet";
+            always = true;
+            notification = false;
           }
           {
-            block = "battery";
-            format = " $icon $percentage ";
-            charging_format = " $icon $percentage ";
-            full_format = " $icon 100% ";
+            command = "xfce4-clipman";
+            always = false;
+            notification = false;
           }
-          {block = "sound";}
           {
-            block = "time";
-            interval = 60;
-            format = " $timestamp.datetime(f:'%d/%m %R') ";
+            command = "feh --no-fehbg --bg-fill $HOME/pictures/wallpapers/default.jpg";
+            always = true;
+          }
+          {
+            command = "setxkbmap -layout us,se -option grp:caps_toggle";
+            always = true;
+            notification = false;
+          }
+          {
+            command = ''i3-msg 'rename workspace "9" to ""'';
+            always = false;
+          }
+          {
+            command = ''i3-msg 'rename workspace "10" to ""'';
+            always = false;
           }
         ];
-      };
-    };
 
-    xsession = {
-      enable = true;
-      windowManager.i3 = {
-        enable = true;
-        package = pkgs.i3-gaps;
-        config = {
-          modifier = "Mod1";
-          terminal = "kitty-gl";
+        workspaceAutoBackAndForth = true;
 
-          window = {
-            border = 1;
-            hideEdgeBorders = "smart";
-            titlebar = false;
-            commands = [
-              {
-                criteria = {title = "alsamixer";};
-                command = "floating enable, border pixel 1";
-              }
-              {
-                criteria = {class = "Pavucontrol";};
-                command = "floating enable";
-              }
-            ];
-          };
+        gaps = {
+          inner = 10;
+          outer = -11;
+          smartGaps = true;
+          smartBorders = "on";
+        };
 
-          floating.modifier = "Mod1";
-
-          bars = [
-            #(
+        assigns = {
+          "" = [
             {
-              position = "bottom";
-              statusCommand = "${pkgs.i3status-rust}/bin/i3status-rs ${config.xdg.configHome}/i3status-rust/config-default.toml";
-            }
-            #// config.stylix.targets.i3.exportedBarConfig)
-          ];
-
-          startup = [
-            {
-              command = "nm-applet";
-              always = true;
-              notification = false;
-            }
-            {
-              command = "blueman-applet";
-              always = true;
-              notification = false;
-            }
-            {
-              command = "xfce4-clipman";
-              always = false;
-              notification = false;
-            }
-            {
-              command = "feh --no-fehbg --bg-fill $HOME/pictures/wallpapers/default.jpg";
-              always = true;
-            }
-            {
-              command = "setxkbmap -layout us,se -option grp:caps_toggle";
-              always = true;
-              notification = false;
-            }
-            {
-              command = ''i3-msg 'rename workspace "9" to ""'';
-              always = false;
-            }
-            {
-              command = ''i3-msg 'rename workspace "10" to ""'';
-              always = false;
+              class = "Spotify";
+              title = "Spotify Premium";
             }
           ];
+        };
 
-          workspaceAutoBackAndForth = true;
-
-          gaps = {
-            inner = 10;
-            outer = -11;
-            smartGaps = true;
-            smartBorders = "on";
-          };
-
-          assigns = {
-            "" = [
-              {
-                class = "Spotify";
-                title = "Spotify Premium";
-              }
-            ];
-          };
-
-          keybindings = let
+        keybindings =
+          let
             M = "Mod1";
-          in {
+          in
+          {
             "${M}+Return" = "exec --no-startup-id kitty-gl";
             "${M}+Shift+Return" = "exec --no-startup-id ${pkgs.xterm}/bin/xterm";
             "${M}+d" = "exec rofi -show drun -show-icons -modi run";
@@ -151,7 +158,8 @@ in
 
             "${M}+Shift+c" = "reload";
             "${M}+Shift+r" = "restart";
-            "${M}+Shift+e" = ''exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"'';
+            "${M}+Shift+e" =
+              ''exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"'';
             "${M}+x" = "exec ${lockCommand}";
 
             "${M}+h" = "focus left";
@@ -232,29 +240,29 @@ in
             "XF86MonBrightnessUp" = "exec --no-startup-id ${pkgs.brightnessctl}/bin/brightnessctl set +10%";
             "XF86MonBrightnessDown" = "exec --no-startup-id ${pkgs.brightnessctl}/bin/brightnessctl set 10%-";
           };
-        };
-
-        extraConfig = ''
-          default_border pixel 2
-          default_floating_border normal
-          tiling_drag modifier
-
-          mode "resize" {
-              bindsym h resize shrink width 5 px or 5 ppt
-              bindsym j resize shrink height 5 px or 5 ppt
-              bindsym k resize grow height 5 px or 5 ppt
-              bindsym l resize grow width 5 px or 5 ppt
-
-              bindsym Left  resize shrink width 1 px or 1 ppt
-              bindsym Down  resize shrink height 1 px or 1 ppt
-              bindsym Up    resize grow height 1 px or 1 ppt
-              bindsym Right resize grow width 1 px or 1 ppt
-
-              bindsym Return mode "default"
-              bindsym Escape mode "default"
-              bindsym Mod1+r mode "default"
-          }
-        '';
       };
+
+      extraConfig = ''
+        default_border pixel 2
+        default_floating_border normal
+        tiling_drag modifier
+
+        mode "resize" {
+            bindsym h resize shrink width 5 px or 5 ppt
+            bindsym j resize shrink height 5 px or 5 ppt
+            bindsym k resize grow height 5 px or 5 ppt
+            bindsym l resize grow width 5 px or 5 ppt
+
+            bindsym Left  resize shrink width 1 px or 1 ppt
+            bindsym Down  resize shrink height 1 px or 1 ppt
+            bindsym Up    resize grow height 1 px or 1 ppt
+            bindsym Right resize grow width 1 px or 1 ppt
+
+            bindsym Return mode "default"
+            bindsym Escape mode "default"
+            bindsym Mod1+r mode "default"
+        }
+      '';
     };
-  }
+  };
+}

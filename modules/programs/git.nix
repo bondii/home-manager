@@ -3,9 +3,11 @@
   lib,
   pkgs,
   ...
-}: let
+}:
+let
   gitIgnorePath = "${config.xdg.configHome}/git/ignore";
-in {
+in
+{
   programs.git = {
     enable = true;
     package = pkgs.gitFull;

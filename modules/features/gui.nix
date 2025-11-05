@@ -3,11 +3,13 @@
   lib,
   pkgs,
   ...
-}: let
+}:
+let
   cfg = config.pontus.features;
   enableGui = cfg.gui;
 
-  wrap = name: bin:
+  wrap =
+    name: bin:
     pkgs.writeShellScriptBin name ''
       exec ${pkgs.nixgl.nixGLMesa}/bin/nixGLMesa ${bin} "$@"
     '';
@@ -52,10 +54,13 @@
     ${pkgs.xclip}/bin/xclip -selection clipboard -t image/png < "$file"
     ${pkgs.libnotify}/bin/notify-send "Screenshot saved" "$file"
   '';
-in {
+in
+{
   options.pontus.gui = {
     i3 = {
-      enable = lib.mkEnableOption "i3 window manager integration" // {default = true;};
+      enable = lib.mkEnableOption "i3 window manager integration" // {
+        default = true;
+      };
     };
     lockCommand = lib.mkOption {
       type = lib.types.str;
@@ -64,10 +69,11 @@ in {
     };
   };
 
-  imports = [./gui/i3.nix];
+  imports = [ ./gui/i3.nix ];
 
   config = lib.mkIf enableGui {
-    home.packages = with pkgs;
+    home.packages =
+      with pkgs;
       [
         (wrap "kitty-gl" "${pkgs.kitty}/bin/kitty")
         (wrap "imv-gl" "${pkgs.imv}/bin/imv")
@@ -164,12 +170,24 @@ in {
         frame-opacity = 0.90;
         inactive-opacity = 0.9;
         wintypes = {
-          dock = {shadow = false;};
-          dnd = {shadow = false;};
-          tooltip = {shadow = false;};
-          menu = {shadow = false;};
-          dropdown_menu = {shadow = false;};
-          popup_menu = {shadow = false;};
+          dock = {
+            shadow = false;
+          };
+          dnd = {
+            shadow = false;
+          };
+          tooltip = {
+            shadow = false;
+          };
+          menu = {
+            shadow = false;
+          };
+          dropdown_menu = {
+            shadow = false;
+          };
+          popup_menu = {
+            shadow = false;
+          };
         };
       };
     };
@@ -180,12 +198,12 @@ in {
       enable = true;
       lockCmd = config.pontus.gui.lockCommand;
       inactiveInterval = 10;
-      xss-lock.extraOptions = ["--transfer-sleep-lock"];
+      xss-lock.extraOptions = [ "--transfer-sleep-lock" ];
     };
     systemd.user.services.xss-lock = {
       Unit = {
-        After = ["graphical-session.target"];
-        PartOf = ["graphical-session.target"];
+        After = [ "graphical-session.target" ];
+        PartOf = [ "graphical-session.target" ];
       };
       Service = {
         Environment = [

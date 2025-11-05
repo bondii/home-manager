@@ -3,7 +3,8 @@
   lib,
   pkgs,
   ...
-}: let
+}:
+let
   cfg = config.pontus.features;
 
   internalDisplay = "00ffffffffffff0030aeb7410000000000220104a5221678230dd09f5c589527235358000000010101010101010101010101010101016140800471b03c403020360058d71000001a000000fd00283c4c4c10010a2020202020200000000f00d10a28d10a28280a0409e5370d000000fc004e5631363057554d2d4e34450a01a67020790200810015741a00000301283c0000000000003c000000008d00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001090";
@@ -36,11 +37,13 @@
     rotate = "normal";
   };
 in
-  lib.mkIf cfg.laptop (let
+lib.mkIf cfg.laptop (
+  let
     autorandrHotplugScript = pkgs.writeShellScript "autorandr-hotplug" ''
       ${pkgs.autorandr}/bin/autorandr --change --default mobile
     '';
-  in {
+  in
+  {
     home.packages = with pkgs; [
       autorandr
       arandr
@@ -52,14 +55,14 @@ in
     systemd.user.services.xplugd = {
       Unit = {
         Description = "xplugd: autorandr on display hotplug";
-        PartOf = ["graphical-session.target"];
-        After = ["graphical-session.target"];
+        PartOf = [ "graphical-session.target" ];
+        After = [ "graphical-session.target" ];
       };
       Service = {
         ExecStart = "${pkgs.xplugd}/bin/xplugd -n ${autorandrHotplugScript}";
         Restart = "on-failure";
       };
-      Install.WantedBy = ["graphical-session.target"];
+      Install.WantedBy = [ "graphical-session.target" ];
     };
 
     programs.autorandr = {
@@ -144,4 +147,5 @@ in
         }
       ];
     };
-  })
+  }
+)

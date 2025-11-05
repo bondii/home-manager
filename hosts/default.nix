@@ -1,14 +1,16 @@
 {
   inputs,
   mkHome,
-}: let
+}:
+let
   user = {
     name = "pontus";
     homeDirectory = "/home/pontus";
     stateVersion = "25.05";
   };
   system = "x86_64-linux";
-in let
+in
+let
   archDesktop = mkHome {
     inherit system user;
     hostName = "arch-desktop";
@@ -36,7 +38,8 @@ in let
       vscode = false;
     };
   };
-in {
+in
+{
   "pontus" = archDesktop;
   "pontus@arch-desktop" = archDesktop;
   "pontus@ssh-minimal" = sshMinimal;

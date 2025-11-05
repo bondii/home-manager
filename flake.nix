@@ -17,19 +17,22 @@
     #nixvim.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs @ {
-    self,
-    nixpkgs,
-    home-manager,
-    stylix,
-    nixgl,
-    nixvim,
-    ...
-  }: let
-    mkHome = import ./lib/mkHome.nix {inherit inputs;};
-    hostConfigs = import ./hosts/default.nix {inherit inputs mkHome;};
-  in {
-    lib.mkHome = mkHome;
-    homeConfigurations = hostConfigs;
-  };
+  outputs =
+    inputs@{
+      self,
+      nixpkgs,
+      home-manager,
+      stylix,
+      nixgl,
+      nixvim,
+      ...
+    }:
+    let
+      mkHome = import ./lib/mkHome.nix { inherit inputs; };
+      hostConfigs = import ./hosts/default.nix { inherit inputs mkHome; };
+    in
+    {
+      lib.mkHome = mkHome;
+      homeConfigurations = hostConfigs;
+    };
 }
