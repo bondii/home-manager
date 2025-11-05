@@ -18,7 +18,7 @@ in {
         };
 
         packages = with pkgs; [
-          alejandra # or nixfmt
+          nixfmt-rfc-style # Nix formatter
           statix
           deadnix
           manix # Quick lookup of Nix/HM options

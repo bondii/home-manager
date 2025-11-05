@@ -682,7 +682,7 @@ in {
               timeout_ms = 5000;
             };
             formatters_by_ft = {
-              nix = ["alejandra"]; # alt: nixpkgs.nixfmt
+              nix = ["nixfmt"]; # provided by nixfmt-rfc-style
               lua = ["stylua"];
               terraform = ["terraform_fmt"];
               dockerfile = ["dockfmt"];
