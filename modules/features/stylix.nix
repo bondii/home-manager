@@ -55,6 +55,7 @@ in
           (lib.mkIf cfg.gui {
             gtk.enable = true;
             qt.enable = true;
+            firefox.enable = lib.mkDefault false;
           })
           (lib.mkIf cfg.fonts {
             fontconfig.enable = true;
