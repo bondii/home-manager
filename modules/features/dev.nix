@@ -66,7 +66,7 @@ lib.mkIf cfg.dev {
 
     pgadminWrapped
 
-    devenv
+    #devenv
 
     google-chrome
   ];

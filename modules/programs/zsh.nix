@@ -54,5 +54,7 @@ in
 
     # How do I break this out?
     xclip = "${pkgs.xclip}/bin/xclip -selection clipboard";
+
+    devenv = "nix run github:cachix/devenv/latest --";
   };
 }
