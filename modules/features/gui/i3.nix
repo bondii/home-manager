@@ -203,8 +203,10 @@ lib.mkIf enableI3 {
             "${M}+8" = "workspace number 8";
             "${M}+9" = "workspace ";
             "${M}+0" = "workspace ";
-            "${M}+Ctrl+Right" = "workspace next";
-            "${M}+Ctrl+Left" = "workspace prev";
+            "${M}+Ctrl+Right" = "move workspace to output right";
+            "${M}+Ctrl+Left" = "move workspace to output left";
+            "${M}+Ctrl+Up" = "move workspace to output up";
+            "${M}+Ctrl+Down" = "move workspace to output down";
             "${M}+Shift+b" = "move container to workspace back_and_forth; workspace back_and_forth";
             "${M}+Tab" = "workspace back_and_forth";
 
