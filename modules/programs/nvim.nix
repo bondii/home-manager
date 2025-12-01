@@ -939,9 +939,21 @@ in
         smear-cursor = {
           enable = true;
           settings = {
-            #hide_target_hack = true;
+            never_draw_over_target = true;
+            hide_target_hack = true;
             #delay_animation_start = 10;
             min_jump = 3;
+
+            particles_enabled = true;
+            particle_spread = 1;
+            particles_per_second = 500;
+            particles_per_length = 50;
+            particle_max_lifetime = 800;
+            particle_max_initial_velocity = 20;
+            particle_velocity_from_cursor = 0.5;
+            particle_damping = 0.15;
+            particle_gravity = 50;
+            min_distance_emit_particles = 0;
           };
         };
 
