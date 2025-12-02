@@ -923,6 +923,8 @@ in
           settings = {
             input.enabled = true;
             picker.enabled = true;
+            terminal.enabled = true;
+            toggle.enabled = true;
           };
         };
 

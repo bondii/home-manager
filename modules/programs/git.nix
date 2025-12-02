@@ -11,18 +11,12 @@ in
   programs.git = {
     enable = true;
     package = pkgs.gitFull;
-    userName = "Pontus Eriksson";
-    userEmail = "pontus_eriksson@live.com";
 
-    delta = {
-      enable = true;
-      options = {
-        features = "side-by-side line-numbers decorations";
-        navigate = true;
+    settings = {
+      user = {
+        name = "Pontus Eriksson";
+        email = "pontus_eriksson@live.com";
       };
-    };
-
-    extraConfig = {
       core = {
         compression = 9;
         whitespace = "error";
@@ -69,41 +63,37 @@ in
         show = "delta";
         branch = false;
       };
-      interactive = {
-        #diffFilter = "delta --color-only";
-        singleKey = true;
-      };
+      interactive.singleKey = true;
       rerere.enabled = true;
       branch.sort = "committerdate";
-    };
+      alias = {
+        lg = "log --all --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)'";
 
-    aliases = {
-      lg = "log --all --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)'";
+        # Git på Svenska
+        ryck = "pull";
+        knuff = "push";
+        gren = "branch";
+        bifall = "commit -v";
+        ympa = "rebase";
+        klona = "clone";
+        kolla = "checkout";
+        kika = "fetch";
+        vask = "restore";
+        whoops = "commit --amend --no-edit";
+        visa = "show";
+        foga = "merge --ff-only";
 
-      # Git på Svenska
-      ryck = "pull";
-      knuff = "push";
-      gren = "branch";
-      bifall = "commit -v";
-      ympa = "rebase";
-      klona = "clone";
-      kolla = "checkout";
-      kika = "fetch";
-      vask = "restore";
-      whoops = "commit --amend --no-edit";
-      visa = "show";
-      foga = "merge --ff-only";
+        dra = "pull";
+        sammanfoga = "merge";
+        lagra = "stash";
+        klandra = "blame";
+        mark = "tag";
+        markera = "tag";
+        byt = "switch";
+        kapa = "branch -D";
 
-      dra = "pull";
-      sammanfoga = "merge";
-      lagra = "stash";
-      klandra = "blame";
-      mark = "tag";
-      markera = "tag";
-      byt = "switch";
-      kapa = "branch -D";
-
-      flex = ''!f() { git diff --numstat "$1" | awk '{added += $1; removed += $2} END {print "Added lines:", added, "| Removed lines:", removed}'; }; f'';
+        flex = ''!f() { git diff --numstat "$1" | awk '{added += $1; removed += $2} END {print "Added lines:", added, "| Removed lines:", removed}'; }; f'';
+      };
     };
 
     includes = [
@@ -112,6 +102,15 @@ in
         contents.user.email = "pontus.eriksson@opac.se";
       }
     ];
+  };
+
+  programs.delta = {
+    enable = true;
+    enableGitIntegration = true;
+    options = {
+      features = "side-by-side line-numbers decorations";
+      navigate = true;
+    };
   };
 
   xdg.configFile."git/ignore".text = ''

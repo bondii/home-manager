@@ -3,29 +3,22 @@
   programs.ssh = {
     enable = true;
     package = pkgs.openssh;
-
-    extraConfig = ''
-      Host *
-        AddKeysToAgent yes
-        IdentitiesOnly yes
-    '';
+    enableDefaultConfig = false;
 
     matchBlocks = {
-      "github.com" = {
-        hostname = "github.com";
-        identityFile = [ "~/.ssh/id_ed25519" ];
+      "*" = {
         extraOptions = {
           AddKeysToAgent = "yes";
           IdentitiesOnly = "yes";
         };
       };
+      "github.com" = {
+        hostname = "github.com";
+        identityFile = [ "~/.ssh/id_ed25519" ];
+      };
       "ssh.dev.azure.com" = {
         hostname = "ssh.dev.azure.com";
         identityFile = [ "~/.ssh/id_rsa_azure" ];
-        extraOptions = {
-          AddKeysToAgent = "yes";
-          IdentitiesOnly = "yes";
-        };
       };
     };
   };

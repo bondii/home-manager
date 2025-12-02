@@ -23,8 +23,6 @@ lib.mkIf enableI3 {
         #};
         theme.theme = "gruvbox-dark";
         icons.icons = "material-nf";
-        trayOutput = "primary";
-        trayPadding = 4;
       };
       blocks = [
         {
@@ -56,7 +54,7 @@ lib.mkIf enableI3 {
     enable = true;
     windowManager.i3 = {
       enable = true;
-      package = pkgs.i3-gaps;
+      package = pkgs.i3;
       config = {
         modifier = "Mod1";
         terminal = "kitty-gl";
