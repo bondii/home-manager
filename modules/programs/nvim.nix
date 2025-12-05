@@ -946,16 +946,20 @@ in
             #delay_animation_start = 10;
             min_jump = 3;
 
+            time_interval = 8;
+
+            gradient_exponent = 0;
+
             particles_enabled = true;
             particle_spread = 1;
-            particles_per_second = 500;
-            particles_per_length = 50;
-            particle_max_lifetime = 800;
-            particle_max_initial_velocity = 20;
-            particle_velocity_from_cursor = 0.5;
-            particle_damping = 0.15;
+            particles_per_second = 100;
+            particles_per_length = 75;
+            particle_max_lifetime = 1500;
+            particle_max_initial_velocity = 10; # 20;
+            particle_velocity_from_cursor = 1.0;
+            particle_damping = 0.1; # 0.15;
             particle_gravity = 50;
-            min_distance_emit_particles = 0;
+            #min_distance_emit_particles = 0.25;
           };
         };
 
