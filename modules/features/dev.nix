@@ -26,6 +26,7 @@ lib.mkIf cfg.dev {
     ripgrep
     fd
     lsof
+    netcat-openbsd
     #gcc
     nodejs
     lua-language-server
