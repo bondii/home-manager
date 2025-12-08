@@ -12,6 +12,7 @@ in
     {
       nixpkgs.config.allowUnfree = true;
       xdg.enable = true;
+      systemd.user.systemctlPath = "/usr/bin/systemctl";
 
       home = {
         sessionPath = [ "${config.home.homeDirectory}/.nix-profile/bin" ];
