@@ -107,6 +107,7 @@ in
       ]
       ++ lib.optionals cfg.fonts [
         nerd-fonts.jetbrains-mono
+        unifont
         noto-fonts
         noto-fonts-cjk-sans
         noto-fonts-color-emoji
