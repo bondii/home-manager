@@ -40,16 +40,25 @@
 
       query="''${*}"
 
-      reloadCmd="rg --vimgrep -F --smart-case --hidden --glob '!.git' --no-messages --color=never -- {q} \"''${dir}\" || true"
+      rgBase="rg --vimgrep -F --smart-case --hidden --glob '!.git' --no-messages --color=never --"
+      reloadCmd="''${rgBase} {q} \"''${dir}\" || true"
       binds="change:reload:''${reloadCmd}"
+
+      fzfDefaultCommand=""
       if [ -n "''${query}" ]; then
-        binds="start:reload:''${reloadCmd},''${binds}"
+        escapedQuery="$(printf '%q' "''${query}")"
+        fzfDefaultCommand="''${rgBase} ''${escapedQuery} \"''${dir}\" || true"
       fi
 
       # fzf runs with an empty list first; on each keystroke (change),
       # we reload results from ripgrep using the current query {q}.
       # We show right-aligned file:line:col + match text (with highlights) and preview the focused match with context.
       selection="$(
+        if [ -n "''${fzfDefaultCommand}" ]; then
+          FZF_DEFAULT_COMMAND="''${fzfDefaultCommand}"
+        else
+          unset FZF_DEFAULT_COMMAND
+        fi
         FZF_DEFAULT_OPTS="--height=80% --layout=reverse --border" \
         fzf --ansi --disabled --query "''${query}" \
           --prompt="rg> " \
