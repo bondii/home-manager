@@ -47,7 +47,7 @@ in
 lib.mkIf cfg.laptop (
   let
     autorandrHotplugScript = pkgs.writeShellScript "autorandr-hotplug" ''
-      ${pkgs.autorandr}/bin/autorandr --change --default mobile
+      ${pkgs.autorandr}/bin/autorandr --change
     '';
   in
   {
@@ -178,7 +178,7 @@ lib.mkIf cfg.laptop (
       enable = true;
       config.startup = [
         {
-          command = "${pkgs.autorandr}/bin/autorandr --change --default mobile";
+          command = "${pkgs.autorandr}/bin/autorandr --change";
           always = true;
         }
       ];
