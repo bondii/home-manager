@@ -116,11 +116,11 @@ lib.mkIf enableI3 {
             notification = false;
           }
           {
-            command = ''i3-msg 'rename workspace "9" to ""'';
+            command = ''i3-msg 'workspace "9"; rename workspace to ""; workspace "1"'';
             always = false;
           }
           {
-            command = ''i3-msg 'rename workspace "10" to ""'';
+            command = ''i3-msg 'workspace "10"; rename workspace to ""; workspace "1"'';
             always = false;
           }
         ];
@@ -138,7 +138,8 @@ lib.mkIf enableI3 {
           "" = [
             {
               class = "Spotify";
-              title = "Spotify Premium";
+              instance = "spotify";
+              window_role = "spotify";
             }
           ];
         };
