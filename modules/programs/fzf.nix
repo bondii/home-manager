@@ -14,6 +14,16 @@
     # sf ("nvim search file"): Fuzzy find file; open in Neovim
     (pkgs.writeShellScriptBin "sf" ''
       set -euo pipefail
+
+      append_zsh_history() {
+        local target="$1"
+        local hist_file hist_entry resolved
+        hist_file="''${HISTFILE:-$HOME/.histfile}"
+        resolved="$(realpath -- "''${target}" 2>/dev/null || printf '%s' "''${target}")"
+        hist_entry="nv $(printf '%q' "''${resolved}")"
+        { printf ': %s:0;%s\n' "$(date +%s)" "''${hist_entry}" >> "''${hist_file}"; } 2>/dev/null || true
+      }
+
       query="''${1:-}"
       if [ "$#" -gt 0 ]; then
         shift
@@ -22,6 +32,9 @@
         fd --type f --hidden --exclude .git "$@" \
         | fzf --query "''${query}" --preview 'bat --style=numbers --color=always --line-range=:200 {}'
       )" || exit 0
+
+      [ -n "''${file}" ] || exit 0
+      append_zsh_history "''${file}"
       exec nvim "$file"
     '')
 
@@ -30,6 +43,16 @@
       #!/usr/bin/env bash
       # Interactive content search -> open in Neovim at match
       set -euo pipefail
+
+      append_zsh_history() {
+        local target="$1"
+        local hist_file hist_entry resolved
+        hist_file="''${HISTFILE:-$HOME/.histfile}"
+        resolved="$(realpath -- "''${target}" 2>/dev/null || printf '%s' "''${target}")"
+        hist_entry="nv $(printf '%q' "''${resolved}")"
+        { printf ': %s:0;%s\n' "$(date +%s)" "''${hist_entry}" >> "''${hist_file}"; } 2>/dev/null || true
+      }
+
       dir="."
       query=""
 
@@ -77,6 +100,8 @@
       col="$(printf %s "''${selection}" | cut -d: -f3 | sed 's/^[[:space:]]*//')"
 
       [ -n "''${file}" ] || exit 0
+
+      append_zsh_history "''${file}"
 
       # Jump to line:col in Neovim
       exec nvim "+call cursor(''${line},''${col})" -- "''${file}"
