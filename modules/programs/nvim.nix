@@ -941,24 +941,25 @@ in
         smear-cursor = {
           enable = true;
           settings = {
+            legacy_computing_symbols_support = true;
             never_draw_over_target = true;
             hide_target_hack = true;
             #delay_animation_start = 10;
             min_jump = 3;
 
-            time_interval = 8;
+            #time_interval = 8;
 
             gradient_exponent = 0;
 
             particles_enabled = true;
-            particle_spread = 1;
-            particles_per_second = 100;
-            particles_per_length = 75;
+            particle_spread = 1.25;
+            particles_per_second = 150; # 100
+            particles_per_length = 100; # 75
             particle_max_lifetime = 1500;
-            particle_max_initial_velocity = 10; # 20;
-            particle_velocity_from_cursor = 1.0;
-            particle_damping = 0.1; # 0.15;
-            particle_gravity = 50;
+            particle_max_initial_velocity = 15; # 20;
+            particle_velocity_from_cursor = 1;
+            particle_damping = 0.05; # 0.15;
+            particle_gravity = 20; # 50
             #min_distance_emit_particles = 0.25;
           };
         };
