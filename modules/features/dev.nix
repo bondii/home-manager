@@ -46,6 +46,10 @@ lib.mkIf cfg.dev {
     markdownlint-cli
     yamllint
     lua54Packages.luacheck
+    hunspell
+    hunspellDicts.sv_SE
+    hunspellDicts.en-us
+    enchant
 
     # Needed for e.g. numpy
     #stdenv.cc.cc.lib

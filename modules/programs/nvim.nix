@@ -492,7 +492,10 @@ in
 
         treesitter = {
           enable = true;
+          package = pkgs.vimPlugins.nvim-treesitter;
           settings = {
+            auto_install = false;
+            parser_install_dir.__raw = "vim.fn.stdpath('data') .. '/treesitter'";
             ensure_installed = [
               "bash"
               "c"
@@ -1010,6 +1013,9 @@ in
         vim.g.mkdp_auto_start = 0
         vim.g.mkdp_auto_close = 1
         vim.g.mkdp_filetypes = { "markdown" }
+
+        local treesitter_parser_dir = vim.fn.stdpath("data") .. "/treesitter"
+        vim.opt.runtimepath:append(treesitter_parser_dir)
 
         -- Diagnostics --
         vim.diagnostic.config({
