@@ -8,6 +8,21 @@
 let
   cfg = features;
   haveNerd = cfg.fonts or false;
+  azurePipelineSchemaPatterns = [
+    "azure-pipelines.yml"
+    "azure-pipelines.yaml"
+    "azure-pipelines/*.yml"
+    "azure-pipelines/*.yaml"
+    ".azure-pipelines/*.yml"
+    ".azure-pipelines/*.yaml"
+    "**/azure-pipelines*.y?(a)ml"
+    "/azure-pipeline*.y*l"
+    "/*.azure*"
+    "Azure-Pipelines/**/*.y*l"
+    "Pipelines/*.y*l"
+  ];
+  azurePipelineSchemaStoreUrl = "https://json.schemastore.org/azure-pipelines.json";
+  azurePipelineServiceSchemaUrl = "https://raw.githubusercontent.com/microsoft/azure-pipelines-vscode/master/service-schema.json";
 in
 {
   imports = lib.optionals (cfg.nixvim or false) [ ./vim-shared.nix ];
@@ -646,15 +661,7 @@ in
                   };
                   # Point specifically at the Azure Pipelines schema
                   schemas = {
-                    "https://json.schemastore.org/azure-pipelines.json" = [
-                      "azure-pipelines.yml"
-                      "azure-pipelines.yaml"
-                      "azure-pipelines/*.yml"
-                      "azure-pipelines/*.yaml"
-                      ".azure-pipelines/*.yml"
-                      ".azure-pipelines/*.yaml"
-                      "**/azure-pipelines*.y?(a)ml"
-                    ];
+                    "${azurePipelineSchemaStoreUrl}" = azurePipelineSchemaPatterns;
                   };
                 };
               };
@@ -668,6 +675,20 @@ in
                   end
                 end
               '';
+            };
+
+            azure_pipelines_ls = {
+              enable = true;
+              package = null;
+              cmd = [
+                "azure-pipelines-language-server"
+                "--stdio"
+              ];
+              settings = {
+                yaml = {
+                  schemas."${azurePipelineServiceSchemaUrl}" = azurePipelineSchemaPatterns;
+                };
+              };
             };
 
             docker_compose_language_service.enable = lib.mkForce false;
