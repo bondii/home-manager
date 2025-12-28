@@ -55,6 +55,7 @@ lib.mkIf cfg.dev {
     #stdenv.cc.cc.lib
     #glibc
     #zlib
+    krb5
 
     #postgresql
     #libpq
