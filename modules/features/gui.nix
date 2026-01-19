@@ -7,11 +7,12 @@
 let
   cfg = config.pontus.features;
   enableGui = cfg.gui;
+  nixglAvailable = pkgs ? nixgl && pkgs.nixgl ? nixGLMesa;
 
   wrap =
     name: bin:
     pkgs.writeShellScriptBin name ''
-      exec ${pkgs.nixgl.nixGLMesa}/bin/nixGLMesa ${bin} "$@"
+      exec ${lib.optionalString nixglAvailable "${pkgs.nixgl.nixGLMesa}/bin/nixGLMesa "}${bin} "$@"
     '';
 
   lockPixel = pkgs.writeShellScriptBin "lock-pixel" ''
@@ -52,6 +53,11 @@ let
     ${pkgs.xclip}/bin/xclip -selection clipboard -t image/png < "$file"
     ${pkgs.libnotify}/bin/notify-send "Screenshot saved" "$file"
   '';
+  picomCommand =
+    if nixglAvailable then
+      "${pkgs.nixgl.nixGLMesa}/bin/nixGLMesa ${pkgs.picom}/bin/picom"
+    else
+      "${pkgs.picom}/bin/picom";
 in
 {
   options.pontus.gui = {
@@ -76,8 +82,11 @@ in
         (wrap "kitty-gl" "${pkgs.kitty}/bin/kitty")
         (wrap "imv-gl" "${pkgs.imv}/bin/imv")
         (wrap "picom-gl" "${pkgs.picom}/bin/picom")
+      ]
+      ++ lib.optionals nixglAvailable [
         pkgs.nixgl.nixGLMesa
-
+      ]
+      ++ [
         maim
         imagemagick
         lockPixel
@@ -191,7 +200,7 @@ in
       };
     };
     systemd.user.services.picom.Service.ExecStart =
-      lib.mkForce "${pkgs.nixgl.nixGLMesa}/bin/nixGLMesa ${pkgs.picom}/bin/picom --config ${config.xdg.configHome}/picom/picom.conf";
+      lib.mkForce "${picomCommand} --config ${config.xdg.configHome}/picom/picom.conf";
 
     services.screen-locker = {
       enable = true;

@@ -29,10 +29,41 @@
     }:
     let
       mkHome = import ./lib/mkHome.nix { inherit inputs; };
-      hostConfigs = import ./hosts/default.nix { inherit inputs mkHome; };
+      mkNixos = import ./lib/mkNixos.nix { inherit inputs; };
+      homeHostConfigs = import ./hosts/default.nix { inherit inputs mkHome; };
+      nixosHostConfigs = import ./nixos/hosts/default.nix { inherit inputs mkNixos; };
+      supportedSystems = [
+        "x86_64-linux"
+        "aarch64-linux"
+      ];
+      forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
     in
     {
       lib.mkHome = mkHome;
-      homeConfigurations = hostConfigs;
+      lib.mkNixos = mkNixos;
+      homeConfigurations = homeHostConfigs;
+      nixosConfigurations = nixosHostConfigs;
+
+      apps = forAllSystems (
+        system:
+        let
+          pkgs = import nixpkgs { inherit system; };
+          nixpkgsPath = inputs.nixpkgs.outPath;
+          nixosConfig = ./nixos/hosts/nixos-shell.nix;
+        in
+        {
+          nixos-shell = {
+            type = "app";
+            program = toString (
+              pkgs.writeShellScript "nixos-shell" ''
+                exec ${pkgs.nixos-shell}/bin/nixos-shell \
+                  -I nixpkgs=${nixpkgsPath} \
+                  -I nixos-config=${toString nixosConfig} \
+                  "$@"
+              ''
+            );
+          };
+        }
+      );
     };
 }
