@@ -1048,6 +1048,18 @@ in
           float = { border = "rounded", source = "if_many" },
         })
 
+        -- LSP floats: add a clear border and background for hover/signature
+        vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
+          vim.lsp.handlers.hover,
+          { border = "rounded" }
+        )
+        vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(
+          vim.lsp.handlers.signature_help,
+          { border = "rounded" }
+        )
+        vim.api.nvim_set_hl(0, "NormalFloat", { bg = "#1f1f1f" })
+        vim.api.nvim_set_hl(0, "FloatBorder", { fg = "#6b6b6b", bg = "#1f1f1f" })
+
         local opts = { noremap=true, silent=true }
         vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
         vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
