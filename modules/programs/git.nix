@@ -8,6 +8,41 @@ let
   gitIgnorePath = "${config.xdg.configHome}/git/ignore";
 in
 {
+  home.packages = [
+    (pkgs.writeShellScriptBin "opac-wt" ''
+      #!/usr/bin/env bash
+      set -euo pipefail
+
+      usage() {
+        printf "usage: %s <new-branch-name>\n" "''${0##*/}" >&2
+      }
+
+      if [ "''${1:-}" = "--help" ] || [ "''${1:-}" = "-h" ]; then
+        usage
+        exit 0
+      fi
+
+      if [ "$#" -ne 1 ]; then
+        usage
+        exit 2
+      fi
+
+      branch="$1"
+      srcDir="$(pwd -P)"
+      repoName="$(basename -- "$srcDir")"
+      destDir="$HOME/opac/wt/$repoName/$branch"
+
+      mkdir -p -- "$(dirname -- "$destDir")"
+      git worktree add -b "$branch" "$destDir"
+
+      for f in .env .envrc AGENTS.md; do
+        if [ -e "$srcDir/$f" ]; then
+          cp -p -- "$srcDir/$f" "$destDir/"
+        fi
+      done
+    '')
+  ];
+
   programs.git = {
     enable = true;
     package = pkgs.gitFull;
