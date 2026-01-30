@@ -1028,15 +1028,18 @@ in
 
       extraConfigVim = "source ${config.xdg.configHome}/vim/shared-maps.vim";
 
+      # Must run before plugin setup so nvim-treesitter can *find* already-installed parsers.
+      extraConfigLuaPre = ''
+        local treesitter_parser_dir = vim.fn.stdpath("data") .. "/treesitter"
+        vim.opt.runtimepath:prepend(treesitter_parser_dir)
+      '';
+
       # nvim-lint-mappning + auto-run
       extraConfigLua = ''
         -- Markdown preview plugin defaults
         vim.g.mkdp_auto_start = 0
         vim.g.mkdp_auto_close = 1
         vim.g.mkdp_filetypes = { "markdown" }
-
-        local treesitter_parser_dir = vim.fn.stdpath("data") .. "/treesitter"
-        vim.opt.runtimepath:append(treesitter_parser_dir)
 
         -- Diagnostics --
         vim.diagnostic.config({
