@@ -51,6 +51,63 @@ lib.mkIf cfg.laptop (
     '';
   in
   {
+    home.activation.installDisableAcpiWakeUsbC = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      target="/usr/local/sbin/disable-acpi-wake-usbc"
+      sleepHookTarget="/usr/lib/systemd/system-sleep/disable-acpi-wake-usbc"
+      tmp="$(${pkgs.coreutils}/bin/mktemp)"
+      sleepHookTmp="$(${pkgs.coreutils}/bin/mktemp)"
+
+      ${pkgs.coreutils}/bin/cat >"$tmp" <<'EOF'
+#!/bin/sh
+set -eu
+
+DEVS="XHC0 XHC3 XHC4 NHI0 NHI1"
+
+for dev in $DEVS; do
+  # /proc/acpi/wakeup has format: Device  S-state  Status  Sysfs node
+  status="$(awk -v d="$dev" '$1==d {print $3}' /proc/acpi/wakeup 2>/dev/null || true)"
+  if [ "$status" = "*enabled" ]; then
+    echo "$dev" > /proc/acpi/wakeup
+  fi
+done
+EOF
+
+      ${pkgs.coreutils}/bin/cat >"$sleepHookTmp" <<'EOF'
+#!/bin/sh
+case "$1" in
+  post)
+    /usr/local/sbin/disable-acpi-wake-usbc
+    ;;
+esac
+EOF
+
+      ${pkgs.coreutils}/bin/chmod 0755 "$tmp"
+      ${pkgs.coreutils}/bin/chmod 0755 "$sleepHookTmp"
+
+      needsInstall=0
+      if ! [ -e "$target" ] || ! ${pkgs.diffutils}/bin/cmp -s "$tmp" "$target"; then
+        needsInstall=1
+      fi
+      if ! [ -e "$sleepHookTarget" ] || ! ${pkgs.diffutils}/bin/cmp -s "$sleepHookTmp" "$sleepHookTarget"; then
+        needsInstall=1
+      fi
+
+      if [ "$needsInstall" -eq 0 ]; then
+        ${pkgs.coreutils}/bin/rm -f "$tmp" "$sleepHookTmp"
+      elif command -v sudo >/dev/null 2>&1; then
+        if ! sudo ${pkgs.coreutils}/bin/install -Dm0755 "$tmp" "$target"; then
+          echo "warning: failed to install $target (need root?)" >&2
+        fi
+        if ! sudo ${pkgs.coreutils}/bin/install -Dm0755 "$sleepHookTmp" "$sleepHookTarget"; then
+          echo "warning: failed to install $sleepHookTarget (need root?)" >&2
+        fi
+        ${pkgs.coreutils}/bin/rm -f "$tmp" "$sleepHookTmp"
+      else
+        echo "warning: sudo not found; skipping install of $target and $sleepHookTarget" >&2
+        ${pkgs.coreutils}/bin/rm -f "$tmp" "$sleepHookTmp"
+      fi
+    '';
+
     home.packages = with pkgs; [
       autorandr
       arandr
