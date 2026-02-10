@@ -287,7 +287,7 @@ in
             function()
               local neoscroll = require("neoscroll")
               local lines = math.max(1, math.floor(vim.api.nvim_win_get_height(0) * 0.25))
-              neoscroll.scroll(lines, true, 150)
+              neoscroll.scroll(lines, { move_cursor = true, duration = 150 })
             end
           '';
           options.desc = "Scroll down (1/4 screen)";
@@ -300,7 +300,7 @@ in
             function()
               local neoscroll = require("neoscroll")
               local lines = math.max(1, math.floor(vim.api.nvim_win_get_height(0) * 0.25))
-              neoscroll.scroll(-lines, true, 150)
+              neoscroll.scroll(-lines, { move_cursor = true, duration = 150 })
             end
           '';
           options.desc = "Scroll up (1/4 screen)";
