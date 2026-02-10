@@ -16,9 +16,18 @@ let
     stylix
     ;
   lib = nixpkgs.lib;
+  # nixGL still reads `final.system` in its overlay; nixpkgs keeps `system` as a
+  # warning alias, so provide a non-warning compat attr here.
+  # ToDo: Remove this once nixGL stops reading `final.system`.
+  systemCompatOverlay = final: prev: {
+    system = prev.stdenv.hostPlatform.system;
+  };
   pkgs = import nixpkgs {
     inherit system;
-    overlays = [ nixgl.overlay ];
+    overlays = [
+      systemCompatOverlay
+      nixgl.overlay
+    ];
   };
   baseModules = [
     ./../modules/core/options.nix
