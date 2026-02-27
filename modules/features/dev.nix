@@ -79,15 +79,23 @@ lib.mkIf cfg.dev {
 
   home = {
     sessionPath = [
-      #"$HOME/.npm-packages/bin"
+      "$HOME/.npm-packages/bin"
     ];
     sessionVariables = {
-      #NPM_CONFIG_PREFIX = "$HOME/.npm-packages";
+      NPM_CONFIG_PREFIX = "$HOME/.npm-packages";
       USE_GKE_GCLOUD_AUTH_PLUGIN = "True";
     };
-    #  activation.createNpmPrefix = lib.hm.dag.entryAfter ["writeBoundary"] ''
-    #    mkdir -p "$HOME/.npm-packages/bin""
-    #  '';
+    activation.createNpmPrefix = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      mkdir -p "$HOME/.npm-packages/bin"
+    '';
+
+    activation.installOpenclaw = lib.hm.dag.entryAfter [ "createNpmPrefix" ] ''
+      export NPM_CONFIG_PREFIX="$HOME/.npm-packages"
+
+      if ! ${pkgs.nodejs}/bin/npm --prefix "$HOME/.npm-packages" list --global --depth=0 openclaw >/dev/null 2>&1; then
+        ${pkgs.nodejs}/bin/npm install --global --no-fund --no-audit openclaw@latest
+      fi
+    '';
 
     file.".pgadmin/config_local.py".text = ''
       MASTER_PASSWORD_REQUIRED = True
