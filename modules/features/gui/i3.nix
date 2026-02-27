@@ -189,6 +189,7 @@ lib.mkIf enableI3 {
             "${M}+Ctrl+s" = "exec --no-startup-id screenshot-full";
 
             "${M}+Shift+space" = "floating toggle";
+            "${M}+Shift+f" = "floating enable; sticky enable";
             "${M}+space" = "focus mode_toggle";
             "${M}+a" = "focus parent";
 
