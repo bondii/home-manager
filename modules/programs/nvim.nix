@@ -89,6 +89,21 @@ in
       # Autocmds
       autoCmd = [
         {
+          event = [ "FileType" ];
+          pattern = [ "markdown" ];
+          desc = "Hard wrap Markdown while typing";
+          callback.__raw = ''
+            function()
+              -- Insert real line breaks when typing past 'textwidth'.
+              -- This is buffer-local so it doesn't affect other filetypes.
+              vim.opt_local.textwidth = 80
+              vim.opt_local.formatoptions:append({ "t" })
+              vim.opt_local.formatoptions:remove({ "l" })
+            end
+          '';
+        }
+
+        {
           event = [ "TextYankPost" ];
           desc = "Highlight when yanking text";
           #group = "highlight-yank";
