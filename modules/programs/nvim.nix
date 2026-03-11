@@ -990,7 +990,7 @@ in
 
             gradient_exponent = 0;
 
-            particles_enabled = true;
+            particles_enabled = false;
             particle_spread = 1.25;
             particles_per_second = 150; # 100
             particles_per_length = 100; # 75
