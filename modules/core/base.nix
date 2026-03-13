@@ -30,6 +30,8 @@ in
           btop
           htop
           tree
+          ncdu
+          lsof
 
           spotify
         ];
