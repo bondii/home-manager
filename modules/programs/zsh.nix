@@ -42,6 +42,28 @@ in
 
       # Autosuggestions: Accept with Ctrl+Space
       bindkey '^ ' autosuggest-accept
+
+      nva() {
+        local -a files
+        files=("''${(@f)$( {
+          git diff --name-only --cached --diff-filter=ACMRTUXB
+          git diff --name-only --diff-filter=ACMRTUXB
+          git ls-files -o --exclude-standard
+        } | sort -u)}")
+        (( $#files )) && nvim -- "''${files[@]}"
+      }
+
+      nvu() {
+        local -a files
+        files=("''${(@f)$(git diff --name-only --diff-filter=ACMRTUXB)}")
+        (( $#files )) && nvim -- "''${files[@]}"
+      }
+
+      nvs() {
+        local -a files
+        files=("''${(@f)$(git diff --cached --name-only --diff-filter=ACMRTUXB)}")
+        (( $#files )) && nvim -- "''${files[@]}"
+      }
     '';
   };
 
