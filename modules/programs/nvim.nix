@@ -1087,13 +1087,40 @@ in
 
 
         local lint = require("lint")
+
+        local function python_linters()
+          local linters = { "ruff" }
+          local venv = vim.env.VIRTUAL_ENV or vim.env.CONDA_PREFIX
+
+          if venv and venv ~= "" then
+            local bin_dir = venv .. "/bin"
+            if vim.fn.executable(bin_dir .. "/flake8") == 1 then
+              table.insert(linters, "flake8")
+            end
+            if vim.fn.executable(bin_dir .. "/mypy") == 1 then
+              table.insert(linters, "mypy")
+            end
+          end
+
+          return linters
+        end
+
+        local function try_lint_current_buffer()
+          local bufnr = vim.api.nvim_get_current_buf()
+          if vim.bo[bufnr].filetype == "python" then
+            lint.try_lint(python_linters())
+          else
+            lint.try_lint()
+          end
+        end
+
         lint.linters_by_ft = {
           javascript = { "eslint_d" },
           typescript = { "eslint_d" },
           tsx        = { "eslint_d" },
           jsx        = { "eslint_d" },
           lua        = { "luacheck" },
-          python     = { "flake8", "ruff", "mypy" },
+          python     = { },
           nix        = { "statix", "deadnix" },
           sh         = { "shellcheck" },
           bash       = { "shellcheck" },
@@ -1106,7 +1133,7 @@ in
 
 
         vim.api.nvim_create_autocmd({ "BufWritePost", "BufReadPost", "InsertLeave" }, {
-          callback = function() require("lint").try_lint() end,
+          callback = try_lint_current_buffer,
         })
 
         vim.opt.undodir = vim.fn.stdpath("cache") .. "/undo"
