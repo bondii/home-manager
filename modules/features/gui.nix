@@ -87,6 +87,7 @@ in
         brightnessctl
 
         feh
+        geeqie
         imv
         zathura
         blueman
