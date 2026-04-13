@@ -75,6 +75,8 @@ lib.mkIf cfg.dev {
     #devenv
 
     google-chrome
+
+    rustdesk
   ];
 
   home = {
