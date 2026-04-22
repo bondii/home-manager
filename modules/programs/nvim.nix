@@ -364,8 +364,12 @@ in
         {
           mode = "n";
           key = "<leader>sg";
-          action.__raw = "require('telescope.builtin').live_grep";
-          options.desc = "[S]earch by [G]rep";
+          action.__raw = ''
+            function()
+              _G.project_fuzzy_grep()
+            end
+          '';
+          options.desc = "[S]earch by fuzzy [G]rep";
         }
         {
           mode = "n";
@@ -1051,6 +1055,33 @@ in
 
       # nvim-lint-mappning + auto-run
       extraConfigLua = ''
+        local telescope_conf = require("telescope.config").values
+        local telescope_finders = require("telescope.finders")
+        local telescope_make_entry = require("telescope.make_entry")
+        local telescope_pickers = require("telescope.pickers")
+
+        function _G.project_fuzzy_grep()
+          local cwd = vim.uv.cwd()
+          telescope_pickers.new({}, {
+            prompt_title = "Project Fuzzy Grep",
+            finder = telescope_finders.new_oneshot_job({
+              "rg",
+              "--vimgrep",
+              "--hidden",
+              "--glob",
+              "!.git",
+              "--no-messages",
+              "--color=never",
+              "^.",
+            }, {
+              cwd = cwd,
+              entry_maker = telescope_make_entry.gen_from_vimgrep({}),
+            }),
+            previewer = telescope_conf.grep_previewer({}),
+            sorter = telescope_conf.generic_sorter({}),
+          }):find()
+        end
+
         -- Markdown preview plugin defaults
         vim.g.mkdp_auto_start = 0
         vim.g.mkdp_auto_close = 1
@@ -1067,14 +1098,8 @@ in
         })
 
         -- LSP floats: add a clear border and background for hover/signature
-        vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
-          vim.lsp.handlers.hover,
-          { border = "rounded" }
-        )
-        vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(
-          vim.lsp.handlers.signature_help,
-          { border = "rounded" }
-        )
+        vim.lsp.handlers["textDocument/hover"] = vim.lsp.buf.hover
+        vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.buf.signature_help
         vim.api.nvim_set_hl(0, "NormalFloat", { bg = "#1f1f1f" })
         vim.api.nvim_set_hl(0, "FloatBorder", { fg = "#6b6b6b", bg = "#1f1f1f" })
 
