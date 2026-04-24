@@ -152,7 +152,7 @@ in
     # Global ignore patterns applied across repositories.
     .codex/
     .specify/
-    AGENTS.md
+    # AGENTS.md
     .agents/
   '';
 }
