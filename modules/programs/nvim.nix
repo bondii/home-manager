@@ -526,10 +526,8 @@ in
 
         treesitter = {
           enable = true;
-          package = pkgs.vimPlugins.nvim-treesitter;
           settings = {
             auto_install = false;
-            parser_install_dir.__raw = "vim.fn.stdpath('data') .. '/treesitter'";
             ensure_installed = [
               "bash"
               "c"
@@ -1046,12 +1044,6 @@ in
       ];
 
       extraConfigVim = "source ${config.xdg.configHome}/vim/shared-maps.vim";
-
-      # Must run before plugin setup so nvim-treesitter can *find* already-installed parsers.
-      extraConfigLuaPre = ''
-        local treesitter_parser_dir = vim.fn.stdpath("data") .. "/treesitter"
-        vim.opt.runtimepath:prepend(treesitter_parser_dir)
-      '';
 
       # nvim-lint-mappning + auto-run
       extraConfigLua = ''
