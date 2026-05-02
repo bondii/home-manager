@@ -700,7 +700,7 @@ in
                 function(client, bufnr)
                   local name = vim.api.nvim_buf_get_name(bufnr)
                   if name:match("docker%-compose%.ya?ml$") or name:match("compose%.ya?ml$") then
-                    client.stop()
+                    client:stop()
                   end
                 end
               '';
@@ -745,7 +745,7 @@ in
                   if ft == "json" or ft == "hcl" then
                     local name = vim.api.nvim_buf_get_name(bufnr)
                     if not name:match("docker%-bake%.json$") and not name:match("docker%-bake%.hcl$") then
-                      client.stop()
+                      client:stop()
                     end
                   end
                 end
