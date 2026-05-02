@@ -385,6 +385,18 @@ in
         }
         {
           mode = "n";
+          key = "<leader>sR";
+          action.__raw = "function() _G.project_replace() end";
+          options.desc = "[S]earch and [R]eplace";
+        }
+        {
+          mode = "x";
+          key = "<leader>sR";
+          action.__raw = "function() _G.project_replace_visual() end";
+          options.desc = "[S]earch and [R]eplace";
+        }
+        {
+          mode = "n";
           key = "<leader>s.";
           action.__raw = "require('telescope.builtin').oldfiles";
           options.desc = "Recent files";
@@ -1038,6 +1050,7 @@ in
       }; # END plugins
 
       extraPlugins = with pkgs.vimPlugins; [
+        grug-far-nvim
         #vimplugin-telescope-undo-nvim
         markdown-preview-nvim
         vim-nix
@@ -1072,6 +1085,31 @@ in
             previewer = telescope_conf.grep_previewer({}),
             sorter = telescope_conf.generic_sorter({}),
           }):find()
+        end
+
+        local function project_root()
+          local root = vim.fs.root(0, { ".git" })
+          if root and root ~= "" then
+            return root
+          end
+
+          return vim.uv.cwd()
+        end
+
+        function _G.project_replace()
+          require("grug-far").open({
+            prefills = {
+              paths = project_root(),
+            },
+          })
+        end
+
+        function _G.project_replace_visual()
+          require("grug-far").with_visual_selection({
+            prefills = {
+              paths = project_root(),
+            },
+          })
         end
 
         -- Markdown preview plugin defaults
