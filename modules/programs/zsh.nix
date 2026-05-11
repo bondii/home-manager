@@ -23,8 +23,8 @@ in
 
     history = {
       path = "${config.home.homeDirectory}/.histfile";
-      size = 10000;
-      save = 10000;
+      size = 100000;
+      save = 100000;
       share = true;
     };
 
