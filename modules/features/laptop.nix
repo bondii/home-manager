@@ -258,14 +258,14 @@ lib.mkIf cfg.laptop (
       };
     };
 
-    xsession.windowManager.i3 = {
-      enable = true;
-      config.startup = [
-        {
-          command = "${pkgs.autorandr}/bin/autorandr --change";
-          always = true;
-        }
-      ];
-    };
+    # xsession.windowManager.i3 = {
+    #   enable = true;
+    #   config.startup = [
+    #     {
+    #       command = "${pkgs.autorandr}/bin/autorandr --change";
+    #       always = true;
+    #     }
+    #   ];
+    # };
   }
 )
