@@ -120,6 +120,9 @@ in
         scrollback_lines = 10000;
         term = "xterm-kitty";
         dynamic_background_opacity = "yes";
+        cursor_trail = 1;
+        cursor_trail_start_threshold = 2;
+        cursor_trail_decay = "0.1 0.2";
       };
       keybindings = {
         "ctrl+shift+t" = "new_tab_with_cwd";

@@ -992,7 +992,7 @@ in
         };
 
         smear-cursor = {
-          enable = true;
+          enable = false;
           settings = {
             legacy_computing_symbols_support = true;
             never_draw_over_target = true;
