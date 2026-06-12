@@ -117,6 +117,10 @@ lib.mkIf cfg.laptop (
       xorg.xrandr
       xplugd
       libnotify
+
+      yubikey-manager
+      yubioath-flutter
+      libfido2
     ];
 
     systemd.user.services.xplugd = {
