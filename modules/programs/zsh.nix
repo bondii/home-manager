@@ -73,6 +73,7 @@ in
     vdiff = "nvim -d";
     gs = "git status";
     gl = "git lg";
+    ga = "git add -p .";
 
     # How do I break this out?
     xclip = "${pkgs.xclip}/bin/xclip -selection clipboard";
