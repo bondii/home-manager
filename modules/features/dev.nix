@@ -69,6 +69,7 @@ lib.mkIf cfg.dev {
     python314
     kubernetes-helm
     uv
+    redis
 
     pgadminWrapped
 

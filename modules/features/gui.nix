@@ -103,6 +103,8 @@ in
         xclip
         screenshotRegion
         screenshotFull
+        qbittorrent
+        vlc
       ]
       ++ lib.optionals cfg.fonts [
         nerd-fonts.jetbrains-mono
