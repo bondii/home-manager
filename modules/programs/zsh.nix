@@ -36,6 +36,7 @@ in
 
     initContent = ''
       stty -ixon  # Disable flow control for e.g. Ctrl+S
+      export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=244'
 
       # jk to leave Insert
       bindkey -M viins 'jk' vi-cmd-mode
