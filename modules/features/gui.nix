@@ -96,7 +96,7 @@ in
         rofimoji
         xdotool
         xss-lock
-        xfce.xfce4-clipman-plugin
+        xfce4-clipman-plugin
         redshift
         libreoffice
         gimp

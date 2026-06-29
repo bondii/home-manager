@@ -9,7 +9,10 @@ let
 in
 {
   config = lib.mkIf cfg.gui {
-    programs.firefox.enable = true;
+    programs.firefox = {
+      enable = true;
+      configPath = ".mozilla/firefox";
+    };
 
     xdg.mimeApps = {
       enable = true;

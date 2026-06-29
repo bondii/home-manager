@@ -37,7 +37,7 @@ in
       dockfmt
       yamllint
       jq
-      nodePackages.prettier
+      prettier
       shfmt
       stylua
       black
@@ -764,7 +764,7 @@ in
               timeout_ms = 5000;
             };
             formatters_by_ft = {
-              nix = [ "nixfmt" ]; # provided by nixfmt-rfc-style
+              nix = [ "nixfmt" ];
               lua = [ "stylua" ];
               terraform = [ "terraform_fmt" ];
               dockerfile = [ "dockfmt" ];

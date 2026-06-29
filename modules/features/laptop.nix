@@ -114,7 +114,7 @@ lib.mkIf cfg.laptop (
     home.packages = with pkgs; [
       autorandr
       arandr
-      xorg.xrandr
+      xrandr
       xplugd
       libnotify
 

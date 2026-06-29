@@ -2,17 +2,17 @@
   description = "Pontus Home Manager configurations";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
-    home-manager.url = "github:nix-community/home-manager/release-25.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
+    home-manager.url = "github:nix-community/home-manager/release-26.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
-    stylix.url = "github:nix-community/stylix/release-25.11";
+    stylix.url = "github:nix-community/stylix/release-26.05";
     stylix.inputs.nixpkgs.follows = "nixpkgs";
 
     nixgl.url = "github:nix-community/nixGL";
     nixgl.inputs.nixpkgs.follows = "nixpkgs";
 
-    #nixvim.url = "github:nix-community/nixvim/nixos-25.05";
+    #nixvim.url = "github:nix-community/nixvim/nixos-26.05";
     nixvim.url = "github:nix-community/nixvim";
     #nixvim.inputs.nixpkgs.follows = "nixpkgs";
   };

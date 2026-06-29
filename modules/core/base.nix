@@ -21,7 +21,7 @@ in
         };
 
         packages = with pkgs; [
-          nixfmt-rfc-style # Nix formatter
+          nixfmt # Nix formatter
           statix
           deadnix
           manix # Quick lookup of Nix/HM options
@@ -38,6 +38,9 @@ in
       };
 
       services.ssh-agent.enable = true;
+
+      # Home Manager 26.05 warns about this default even when Hyprland is not enabled.
+      wayland.windowManager.hyprland.configType = "hyprlang";
 
       programs = {
         home-manager.enable = true;

@@ -35,10 +35,10 @@ lib.mkIf cfg.dev {
     typescript-language-server
     typescript
     pyright
-    nodePackages.vscode-langservers-extracted
-    nodePackages.yaml-language-server
-    nodePackages.bash-language-server
-    nodePackages.eslint_d
+    vscode-langservers-extracted
+    yaml-language-server
+    bash-language-server
+    eslint_d
     ruff
     deadnix
     shellcheck

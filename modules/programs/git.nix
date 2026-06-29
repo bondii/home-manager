@@ -91,13 +91,7 @@ in
         interHunkContext = 10;
       };
       merge.conflictStyle = "zdiff3";
-      pager = {
-        diff = "delta";
-        log = "delta";
-        reflog = "delta";
-        show = "delta";
-        branch = false;
-      };
+      pager.branch = false;
       interactive.singleKey = true;
       rerere.enabled = true;
       branch.sort = "committerdate";
