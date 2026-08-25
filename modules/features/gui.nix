@@ -105,6 +105,7 @@ in
         screenshotFull
         qbittorrent
         vlc
+        darktable
       ]
       ++ lib.optionals cfg.fonts [
         nerd-fonts.jetbrains-mono
