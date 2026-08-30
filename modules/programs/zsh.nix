@@ -76,6 +76,7 @@ in
     gs = "git status";
     gl = "git lg";
     ga = "git add -p .";
+    gd = "git diff";
 
     # How do I break this out?
     xclip = "${pkgs.xclip}/bin/xclip -selection clipboard";
