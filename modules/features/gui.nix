@@ -31,6 +31,20 @@ let
     ${pkgs.rofimoji}/bin/rofimoji --selector rofi --action type "$@"
   '';
 
+  feh = pkgs.writeShellScriptBin "feh" ''
+    set -euo pipefail
+
+    for arg in "$@"; do
+      case "$arg" in
+        --bg-*|--zoom)
+          exec ${pkgs.feh}/bin/feh "$@"
+          ;;
+      esac
+    done
+
+    exec ${pkgs.feh}/bin/feh --zoom max "$@"
+  '';
+
   lockCommandDefault = "${lockPixel}/bin/lock-pixel";
   screenshotDir = "$HOME/pictures/screenshots";
   screenshotRegion = pkgs.writeShellScriptBin "screenshot-region" ''
