@@ -544,40 +544,13 @@ in
 
         treesitter = {
           enable = true;
-          settings = {
-            auto_install = false;
-            ensure_installed = [
-              "bash"
-              "c"
-              "cpp"
-              "lua"
-              "python"
-              "rust"
-              "go"
-              "javascript"
-              "typescript"
-              "tsx"
-              "json"
-              "yaml"
-              "toml"
-              "nix"
-              "markdown"
-              "regex"
-              "diff"
-              "vim"
-              "vimdoc"
-              "luadoc"
-              "markdown_inline"
-              "query"
-
-              "hcl"
-              "terraform"
-              "dockerfile"
-            ];
-            highlight.enable = true;
-            highlight.additional_vim_regex_highlighting = [ "ruby" ];
-            indent.enable = true;
-            indent.disable = [ "ruby" ];
+          highlight = {
+            enable = true;
+            enableVimSyntax = [ "ruby" ];
+          };
+          indent = {
+            enable = true;
+            disable = [ "ruby" ];
           };
         };
 
