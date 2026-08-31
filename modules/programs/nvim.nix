@@ -48,6 +48,12 @@ in
       enable = true;
       defaultEditor = true;
 
+      # Nixvim builds its own nixpkgs instance (its `nixpkgs` input deliberately
+      # does not follow ours - see flake.nix), so `nixpkgs.config.allowUnfree` in
+      # modules/core/base.nix does not reach it. copilot-language-server is pulled
+      # in by nixpkgs' vimPlugins.copilot-lua, used by plugins.copilot-lua below.
+      nixpkgs.config.allowUnfree = true;
+
       #enableLuaLoader = true;
 
       globals = {
