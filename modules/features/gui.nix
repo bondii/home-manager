@@ -42,7 +42,11 @@ let
       esac
     done
 
-    exec ${pkgs.feh}/bin/feh --zoom max "$@"
+    # feh only honours --zoom in fullscreen mode or with a fixed geometry
+    # (see feh(1)), so --fullscreen is required for the fit-to-screen zoom
+    # to actually take effect - otherwise a tiling WM's own window sizing
+    # silently overrides it.
+    exec ${pkgs.feh}/bin/feh --fullscreen --zoom max "$@"
   '';
 
   lockCommandDefault = "${lockPixel}/bin/lock-pixel";
