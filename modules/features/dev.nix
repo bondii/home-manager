@@ -66,7 +66,7 @@ lib.mkIf cfg.dev {
     google-cloud-sql-proxy
     mqtt-explorer
     kubectl
-    python314
+    (python314.withPackages (ps: with ps; [ pypdf ]))
     kubernetes-helm
     uv
     redis
