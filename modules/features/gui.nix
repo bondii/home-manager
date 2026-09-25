@@ -8,10 +8,11 @@ let
   cfg = config.pontus.features;
   enableGui = cfg.gui;
 
-  wrap =
+  wrappedImv = config.lib.nixGL.wrap pkgs.imv;
+  forward =
     name: bin:
     pkgs.writeShellScriptBin name ''
-      exec ${pkgs.nixgl.nixGLMesa}/bin/nixGLMesa ${bin} "$@"
+      exec ${bin} "$@"
     '';
 
   lockPixel = import ../../lib/lockPixel.nix { inherit pkgs; };
@@ -42,25 +43,33 @@ let
 
   lockCommandDefault = "${lockPixel}/bin/lock-pixel";
   screenshotDir = "$HOME/pictures/screenshots";
-  screenshotRegion = pkgs.writeShellScriptBin "screenshot-region" ''
-    set -euo pipefail
-    dir="${screenshotDir}"
-    mkdir -p "$dir"
-    file="$dir/screenshot-$(date '+%Y-%m-%d_%H-%M-%S').png"
-    ${pkgs.maim}/bin/maim -s "$file"
-    ${pkgs.xclip}/bin/xclip -selection clipboard -t image/png < "$file"
-    ${pkgs.libnotify}/bin/notify-send "Screenshot saved" "$file"
-  '';
+  screenshotRegion = pkgs.writeShellApplication {
+    name = "screenshot-region";
+    runtimeInputs = [ pkgs.coreutils ];
+    text = ''
+      set -euo pipefail
+      dir="${screenshotDir}"
+      mkdir -p "$dir"
+      file="$dir/screenshot-$(date '+%Y-%m-%d_%H-%M-%S').png"
+      ${pkgs.maim}/bin/maim -s "$file"
+      ${pkgs.xclip}/bin/xclip -selection clipboard -t image/png < "$file"
+      ${pkgs.libnotify}/bin/notify-send "Screenshot saved" "$file"
+    '';
+  };
 
-  screenshotFull = pkgs.writeShellScriptBin "screenshot-full" ''
-    set -euo pipefail
-    dir="${screenshotDir}"
-    mkdir -p "$dir"
-    file="$dir/screenshot-$(date '+%Y-%m-%d_%H-%M-%S').png"
-    ${pkgs.maim}/bin/maim "$file"
-    ${pkgs.xclip}/bin/xclip -selection clipboard -t image/png < "$file"
-    ${pkgs.libnotify}/bin/notify-send "Screenshot saved" "$file"
-  '';
+  screenshotFull = pkgs.writeShellApplication {
+    name = "screenshot-full";
+    runtimeInputs = [ pkgs.coreutils ];
+    text = ''
+      set -euo pipefail
+      dir="${screenshotDir}"
+      mkdir -p "$dir"
+      file="$dir/screenshot-$(date '+%Y-%m-%d_%H-%M-%S').png"
+      ${pkgs.maim}/bin/maim "$file"
+      ${pkgs.xclip}/bin/xclip -selection clipboard -t image/png < "$file"
+      ${pkgs.libnotify}/bin/notify-send "Screenshot saved" "$file"
+    '';
+  };
 in
 {
   options.pontus.gui = {
@@ -79,12 +88,16 @@ in
   imports = [ ./gui/i3.nix ];
 
   config = lib.mkIf enableGui {
+    targets.genericLinux.nixGL = {
+      packages = pkgs.nixgl;
+      defaultWrapper = "mesa";
+    };
     home.packages =
       with pkgs;
       [
-        (wrap "kitty-gl" "${pkgs.kitty}/bin/kitty")
-        (wrap "imv-gl" "${pkgs.imv}/bin/imv")
-        (wrap "picom-gl" "${pkgs.picom}/bin/picom")
+        (forward "kitty-gl" "${config.programs.kitty.package}/bin/kitty")
+        (forward "imv-gl" "${wrappedImv}/bin/imv")
+        (forward "picom-gl" "${config.services.picom.package}/bin/picom")
         pkgs.nixgl.nixGLMesa
 
         maim
@@ -99,7 +112,7 @@ in
 
         feh
         geeqie
-        imv
+        wrappedImv
         zathura
         blueman
         networkmanagerapplet
@@ -128,6 +141,7 @@ in
 
     programs.kitty = {
       enable = true;
+      package = config.lib.nixGL.wrap pkgs.kitty;
       settings = {
         confirm_os_window_close = 0;
         enable_audio_bell = "no";
@@ -147,7 +161,7 @@ in
 
     programs.rofi = {
       enable = true;
-      terminal = "kitty-gl";
+      terminal = "kitty";
       extraConfig = {
         modi = "drun,run,ssh";
         show-icons = true;
@@ -161,6 +175,7 @@ in
 
       picom = {
         enable = true;
+        package = config.lib.nixGL.wrap pkgs.picom;
         settings = {
           backend = "glx";
           vsync = true;
@@ -229,8 +244,6 @@ in
         };
       };
     };
-    systemd.user.services.picom.Service.ExecStart =
-      lib.mkForce "${pkgs.nixgl.nixGLMesa}/bin/nixGLMesa ${pkgs.picom}/bin/picom --config ${config.xdg.configHome}/picom/picom.conf";
     systemd.user.services.xss-lock = {
       Unit = {
         After = [ "graphical-session.target" ];

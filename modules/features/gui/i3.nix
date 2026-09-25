@@ -57,7 +57,7 @@ lib.mkIf enableI3 {
       package = pkgs.i3;
       config = {
         modifier = "Mod1";
-        terminal = "kitty-gl";
+        terminal = "kitty";
 
         window = {
           border = 1;
@@ -149,7 +149,7 @@ lib.mkIf enableI3 {
             M = "Mod1";
           in
           {
-            "${M}+Return" = "exec --no-startup-id kitty-gl";
+            "${M}+Return" = "exec --no-startup-id kitty";
             "${M}+Shift+Return" = "exec --no-startup-id ${pkgs.xterm}/bin/xterm";
             "${M}+d" = "exec rofi -show drun -show-icons -modi run";
             "${M}+Shift+period" = "exec --no-startup-id emoji-picker";
