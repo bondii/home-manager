@@ -12,6 +12,10 @@ let
   archDesktop = mkHome {
     inherit system user;
     hostName = "arch-desktop";
+    extraModules = [
+      ./archDesktopMonitors.nix
+      ./work.nix
+    ];
     features = {
       stylix = true;
       gui = true;
@@ -26,6 +30,7 @@ let
   sshMinimal = mkHome {
     inherit system user;
     hostName = "ssh-minimal";
+    extraModules = [ ./work.nix ];
     features = {
       stylix = true;
       gui = false;

@@ -2,12 +2,11 @@
   config,
   pkgs,
   lib,
-  features,
   ...
 }:
 let
-  cfg = features;
-  haveNerd = cfg.fonts or false;
+  cfg = config.pontus.features;
+  haveNerd = cfg.fonts;
   azurePipelineSchemaPatterns = [
     "azure-pipelines.yml"
     "azure-pipelines.yaml"
@@ -25,9 +24,9 @@ let
   azurePipelineServiceSchemaUrl = "https://raw.githubusercontent.com/microsoft/azure-pipelines-vscode/master/service-schema.json";
 in
 {
-  imports = lib.optionals (cfg.nixvim or false) [ ./vim-shared.nix ];
+  imports = [ ./vim-shared.nix ];
 
-  config = lib.mkIf (cfg.nixvim or false) {
+  config = lib.mkIf cfg.nixvim {
     home.packages = with pkgs; [
       terraform # Formatter (and CLI)
       terraform-ls

@@ -53,13 +53,13 @@ lib.mkMerge [
         size = 28;
       };
       targets = lib.mkMerge [
+        {
+          gtk.enable = cfg.gui;
+          qt.enable = cfg.gui;
+          fontconfig.enable = cfg.fonts;
+        }
         (lib.mkIf cfg.gui {
-          gtk.enable = true;
-          qt.enable = true;
           firefox.enable = lib.mkDefault false;
-        })
-        (lib.mkIf cfg.fonts {
-          fontconfig.enable = true;
         })
         (lib.mkIf cfg.dev {
           fzf.enable = true;

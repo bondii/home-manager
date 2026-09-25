@@ -1,4 +1,4 @@
-_:
+{ config, lib, ... }:
 let
   sharedMaps = ''
     " ~/.config/vim/shared-maps.vim
@@ -30,6 +30,6 @@ let
     nnoremap <F2> :source $MYVIMRC<CR>
   '';
 in
-{
+lib.mkIf config.pontus.features.nixvim {
   xdg.configFile."vim/shared-maps.vim".text = sharedMaps;
 }

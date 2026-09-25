@@ -44,7 +44,8 @@ in
 
       # Autosuggestions: Accept with Ctrl+Space
       bindkey '^ ' autosuggest-accept
-
+    ''
+    + lib.optionalString cfg.nixvim ''
       nva() {
         local -a files
         files=("''${(@f)$( {
@@ -69,18 +70,20 @@ in
     '';
   };
 
-  programs.zsh.shellAliases = lib.mkIf cfg.nixvim {
-    nv = "nvim";
-    vim = "nvim";
-    vdiff = "nvim -d";
+  programs.zsh.shellAliases = {
     gs = "git status";
     gl = "git lg";
     ga = "git add -p .";
     gd = "git diff";
 
-    # How do I break this out?
-    xclip = "${pkgs.xclip}/bin/xclip -selection clipboard";
-
     devenv = "nix run github:cachix/devenv/latest --";
+  }
+  // lib.optionalAttrs cfg.nixvim {
+    nv = "nvim";
+    vim = "nvim";
+    vdiff = "nvim -d";
+  }
+  // lib.optionalAttrs cfg.gui {
+    xclip = "${pkgs.xclip}/bin/xclip -selection clipboard";
   };
 }

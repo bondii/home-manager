@@ -26,14 +26,12 @@ in
           deadnix
           manix # Quick lookup of Nix/HM options
 
-          pavucontrol
           btop
           htop
           tree
           ncdu
           lsof
 
-          spotify
         ];
       };
 

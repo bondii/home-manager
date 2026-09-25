@@ -22,63 +22,63 @@ let
   };
 in
 lib.mkIf cfg.dev {
-  home.packages = with pkgs; [
-    ripgrep
-    fd
-    lsof
-    netcat-openbsd
-    #gcc
-    nodejs
-    lua-language-server
-    rust-analyzer
-    gopls
-    typescript-language-server
-    typescript
-    pyright
-    vscode-langservers-extracted
-    yaml-language-server
-    bash-language-server
-    eslint_d
-    ruff
-    deadnix
-    shellcheck
-    golangci-lint
-    markdownlint-cli
-    yamllint
-    lua54Packages.luacheck
-    hunspell
-    hunspellDicts.sv_SE
-    hunspellDicts.en-us
-    enchant
+  home.packages =
+    with pkgs;
+    [
+      ripgrep
+      fd
+      lsof
+      netcat-openbsd
+      #gcc
+      nodejs
+      lua-language-server
+      rust-analyzer
+      gopls
+      typescript-language-server
+      typescript
+      pyright
+      vscode-langservers-extracted
+      yaml-language-server
+      bash-language-server
+      eslint_d
+      ruff
+      deadnix
+      shellcheck
+      golangci-lint
+      markdownlint-cli
+      yamllint
+      lua54Packages.luacheck
+      hunspell
+      hunspellDicts.sv_SE
+      hunspellDicts.en-us
+      enchant
 
-    # Needed for e.g. numpy
-    #stdenv.cc.cc.lib
-    #glibc
-    #zlib
-    krb5
+      # Needed for e.g. numpy
+      #stdenv.cc.cc.lib
+      #glibc
+      #zlib
+      krb5
 
-    #postgresql
-    #libpq
-    #openssl
-    # END rnd dev deps
+      #postgresql
+      #libpq
+      #openssl
+      # END rnd dev deps
 
-    (google-cloud-sdk.withExtraComponents [ google-cloud-sdk.components.gke-gcloud-auth-plugin ])
-    google-cloud-sql-proxy
-    mqtt-explorer
-    kubectl
-    (python314.withPackages (ps: with ps; [ pypdf ]))
-    kubernetes-helm
-    uv
-    redis
+      (google-cloud-sdk.withExtraComponents [ google-cloud-sdk.components.gke-gcloud-auth-plugin ])
+      google-cloud-sql-proxy
+      kubectl
+      (python314.withPackages (ps: with ps; [ pypdf ]))
+      kubernetes-helm
+      uv
+      redis
 
-    pgadminWrapped
-
-    #devenv
-
-    google-chrome
-
-    rustdesk
-  ];
+    ]
+    ++ lib.optionals cfg.gui [
+      mqtt-explorer
+      pgadminWrapped
+      google-chrome
+      rustdesk
+    ];
 
   home = {
     sessionPath = [
@@ -92,18 +92,20 @@ lib.mkIf cfg.dev {
       run ${pkgs.coreutils}/bin/mkdir -p "$HOME/.npm-packages/bin"
     '';
 
-    file.".pgadmin/config_local.py".text = ''
-      MASTER_PASSWORD_REQUIRED = True
-      UPGRADE_CHECK_ENABLED = False
-      DEFAULT_BINARY_PATHS = {
-        "pg": "${pkgs.postgresql}/bin",
-        "pg-${postgresqlMajor}": "${pkgs.postgresql}/bin",
-      }
-      FIXED_BINARY_PATHS = {
-        "pg": "${pkgs.postgresql}/bin",
-        "pg-${postgresqlMajor}": "${pkgs.postgresql}/bin",
-      }
-    '';
+    file.".pgadmin/config_local.py" = lib.mkIf cfg.gui {
+      text = ''
+        MASTER_PASSWORD_REQUIRED = True
+        UPGRADE_CHECK_ENABLED = False
+        DEFAULT_BINARY_PATHS = {
+          "pg": "${pkgs.postgresql}/bin",
+          "pg-${postgresqlMajor}": "${pkgs.postgresql}/bin",
+        }
+        FIXED_BINARY_PATHS = {
+          "pg": "${pkgs.postgresql}/bin",
+          "pg-${postgresqlMajor}": "${pkgs.postgresql}/bin",
+        }
+      '';
+    };
 
     file = {
       ".config/ENVRC_EXAMPLE" = {
@@ -121,44 +123,4 @@ lib.mkIf cfg.dev {
     };
   };
 
-  systemd.user.services =
-    let
-      mkCloudSqlProxy =
-        {
-          name,
-          instance,
-          port,
-        }:
-        {
-          Unit = {
-            Description = "Cloud SQL Auth Proxy (${name})";
-            After = [ "network-online.target" ];
-            Wants = [ "network-online.target" ];
-          };
-          Service = {
-            ExecStart =
-              "${pkgs.google-cloud-sql-proxy}/bin/cloud-sql-proxy "
-              + "--address 127.0.0.1 "
-              + "--port ${toString port} "
-              + "--auto-iam-authn "
-              #+ "--private-ip "
-              + instance;
-            Restart = "on-failure";
-            RestartSec = 2;
-            Environment = [ "CSQL_PROXY_STRUCTURED_LOGS=true" ];
-          };
-        };
-    in
-    {
-      "cloud-sql-proxy-dev" = mkCloudSqlProxy {
-        name = "dev";
-        instance = "ship2shore-dev:europe-north1:maritime-instance";
-        port = 1234;
-      };
-      "cloud-sql-proxy-prod" = mkCloudSqlProxy {
-        name = "prod";
-        instance = "ship2shore-prod:europe-north1:maritime-instance";
-        port = 4321;
-      };
-    };
 }

@@ -88,6 +88,8 @@ in
         pkgs.nixgl.nixGLMesa
 
         maim
+        pavucontrol
+        spotify
         imagemagick
         lockPixel
         emojiPicker

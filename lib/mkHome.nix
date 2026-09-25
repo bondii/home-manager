@@ -42,22 +42,16 @@ let
     ./../modules/features/gui.nix
     ./../modules/programs/firefox.nix
     ./../modules/programs/vscode.nix
-  ]
-  ++ lib.optionals (features.stylix or false) [
     ./../modules/features/stylix.nix
     stylix.homeModules.stylix
-  ]
-  ++ lib.optionals (features.nixvim or true) [
     nixvim.homeModules.nixvim
     ./../modules/programs/nvim.nix
-  ]
-  ++ lib.optionals (features.laptop or false) [
     ./../modules/features/laptop.nix
   ];
   featureModule = {
     pontus = {
       inherit hostName;
-      inherit features;
+      features = lib.mapAttrs (_: lib.mkDefault) features;
     };
   };
   userModule = {
@@ -77,6 +71,8 @@ home-manager.lib.homeManagerConfiguration {
     ]
     ++ extraModules;
   extraSpecialArgs = extraSpecialArgs // {
+    # Compatibility only: consumers must use config.pontus.features for the
+    # resolved values, which also include extraModules overrides.
     inherit
       inputs
       features
