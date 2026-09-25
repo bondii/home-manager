@@ -18,21 +18,26 @@
   };
 
   outputs =
-    inputs@{
-      self,
-      nixpkgs,
-      home-manager,
-      stylix,
-      nixgl,
-      nixvim,
-      ...
-    }:
+    inputs:
     let
       mkHome = import ./lib/mkHome.nix { inherit inputs; };
       hostConfigs = import ./hosts/default.nix { inherit inputs mkHome; };
+      system = "x86_64-linux";
+      pkgs = inputs.nixpkgs.legacyPackages.${system};
     in
     {
       lib.mkHome = mkHome;
       homeConfigurations = hostConfigs;
+      formatter.${system} = pkgs.nixfmt;
+      devShells.${system}.default = pkgs.mkShell {
+        packages = with pkgs; [
+          nixfmt
+          statix
+          deadnix
+          shellcheck
+          python3
+        ];
+      };
+      checks.${system} = import ./tests/checks.nix { inherit pkgs hostConfigs; };
     };
 }

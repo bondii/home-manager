@@ -1,6 +1,6 @@
 {
-  inputs,
   mkHome,
+  ...
 }:
 let
   user = {
@@ -9,8 +9,6 @@ let
     stateVersion = "25.05";
   };
   system = "x86_64-linux";
-in
-let
   archDesktop = mkHome {
     inherit system user;
     hostName = "arch-desktop";

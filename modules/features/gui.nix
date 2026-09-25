@@ -161,70 +161,83 @@ in
       };
     };
 
-    services.dunst = {
-      enable = true;
-    };
+    services = {
+      dunst = {
+        enable = true;
+      };
 
-    services.picom = {
-      enable = true;
-      settings = {
-        backend = "glx";
-        vsync = true;
-        detect-client-leader = true;
+      picom = {
+        enable = true;
+        settings = {
+          backend = "glx";
+          vsync = true;
+          detect-client-leader = true;
 
-        opacity-rule = [
-          "100:class_g = 'i3lock'"
-          "100:class_g = 'XSecureLock'"
-          "80:class_g = 'Rofi' && focused"
-        ];
+          opacity-rule = [
+            "100:class_g = 'i3lock'"
+            "100:class_g = 'XSecureLock'"
+            "80:class_g = 'Rofi' && focused"
+          ];
 
-        detect-rounded-corners = true;
-        corner-radius = 12;
-        round-borders = 1;
-        rounded-corners-exclude = [
-          "window_type = 'dock'"
-          "window_type = 'desktop'"
-          "class_g = 'mpv'"
-          "class_g = 'feh'"
-          "name = 'Picture-in-Picture'"
-        ];
+          detect-rounded-corners = true;
+          corner-radius = 12;
+          round-borders = 1;
+          rounded-corners-exclude = [
+            "window_type = 'dock'"
+            "window_type = 'desktop'"
+            "class_g = 'mpv'"
+            "class_g = 'feh'"
+            "name = 'Picture-in-Picture'"
+          ];
 
-        shadow = true;
-        shadow-radius = 16;
-        shadow-opacity = 0.35;
-        frame-opacity = 0.90;
-        inactive-opacity = 0.9;
-        wintypes = {
-          dock = {
-            shadow = false;
+          shadow = true;
+          shadow-radius = 16;
+          shadow-opacity = 0.35;
+          frame-opacity = 0.90;
+          inactive-opacity = 0.9;
+          wintypes = {
+            dock = {
+              shadow = false;
+            };
+            dnd = {
+              shadow = false;
+            };
+            tooltip = {
+              shadow = false;
+            };
+            menu = {
+              shadow = false;
+            };
+            dropdown_menu = {
+              shadow = false;
+            };
+            popup_menu = {
+              shadow = false;
+            };
           };
-          dnd = {
-            shadow = false;
-          };
-          tooltip = {
-            shadow = false;
-          };
-          menu = {
-            shadow = false;
-          };
-          dropdown_menu = {
-            shadow = false;
-          };
-          popup_menu = {
-            shadow = false;
-          };
+        };
+      };
+      screen-locker = {
+        enable = true;
+        lockCmd = config.pontus.gui.lockCommand;
+        inactiveInterval = 10;
+        xss-lock.extraOptions = [ "--transfer-sleep-lock" ];
+      };
+      redshift = {
+        enable = true;
+        settings.redshift = {
+          temp-day = lib.mkForce 6500;
+          temp-night = lib.mkForce 2000;
+          brightness-day = lib.mkForce 1.0;
+          brightness-night = lib.mkForce 0.9;
+          transition = 1;
+          dawn-time = "06:59-07:00";
+          dusk-time = "18:30-20:00";
         };
       };
     };
     systemd.user.services.picom.Service.ExecStart =
       lib.mkForce "${pkgs.nixgl.nixGLMesa}/bin/nixGLMesa ${pkgs.picom}/bin/picom --config ${config.xdg.configHome}/picom/picom.conf";
-
-    services.screen-locker = {
-      enable = true;
-      lockCmd = config.pontus.gui.lockCommand;
-      inactiveInterval = 10;
-      xss-lock.extraOptions = [ "--transfer-sleep-lock" ];
-    };
     systemd.user.services.xss-lock = {
       Unit = {
         After = [ "graphical-session.target" ];
@@ -239,17 +252,5 @@ in
       };
     };
 
-    services.redshift = {
-      enable = true;
-      settings.redshift = {
-        temp-day = lib.mkForce 6500;
-        temp-night = lib.mkForce 2000;
-        brightness-day = lib.mkForce 1.0;
-        brightness-night = lib.mkForce 0.9;
-        transition = 1;
-        dawn-time = "06:59-07:00";
-        dusk-time = "18:30-20:00";
-      };
-    };
   };
 }

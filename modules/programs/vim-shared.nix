@@ -1,9 +1,4 @@
-{
-  config,
-  pkgs,
-  lib,
-  ...
-}:
+_:
 let
   sharedMaps = ''
     " ~/.config/vim/shared-maps.vim

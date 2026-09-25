@@ -15,11 +15,11 @@ let
     nixvim
     stylix
     ;
-  lib = nixpkgs.lib;
+  inherit (nixpkgs) lib;
   # nixGL still reads `final.system` in its overlay; nixpkgs keeps `system` as a
   # warning alias, so provide a non-warning compat attr here.
   # ToDo: Remove this once nixGL stops reading `final.system`.
-  systemCompatOverlay = final: prev: {
+  systemCompatOverlay = _final: prev: {
     system = prev.stdenv.hostPlatform.system;
   };
   pkgs = import nixpkgs {
@@ -57,14 +57,13 @@ let
   featureModule = {
     pontus = {
       inherit hostName;
-      features = features;
+      inherit features;
     };
   };
   userModule = {
     home = {
       username = user.name;
-      homeDirectory = user.homeDirectory;
-      stateVersion = user.stateVersion;
+      inherit (user) homeDirectory stateVersion;
     };
   };
 in

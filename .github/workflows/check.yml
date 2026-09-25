@@ -1,0 +1,18 @@
+name: Check Home Manager
+on:
+  pull_request:
+  push:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+      - uses: cachix/install-nix-action@b85815f71a6de0ddee80b8a80a98d43f4bcc66c7 # v31
+      - name: Evaluate both profiles and all checks
+        run: nix flake check --no-build --no-update-lock-file
+      - name: Build lightweight checks
+        run: nix build --no-link --no-update-lock-file .#checks.x86_64-linux.formatting .#checks.x86_64-linux.lint
