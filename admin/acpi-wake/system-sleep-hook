@@ -1,0 +1,6 @@
+#!/bin/sh
+case "$1" in
+  post)
+    /usr/local/sbin/disable-acpi-wake-usbc
+    ;;
+esac

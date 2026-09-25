@@ -1,0 +1,12 @@
+#!/bin/sh
+set -eu
+
+DEVS="XHC0 XHC3 XHC4 NHI0 NHI1"
+
+for dev in $DEVS; do
+  # /proc/acpi/wakeup: Device S-state Status Sysfs node
+  status="$(awk -v d="$dev" '$1==d {print $3}' /proc/acpi/wakeup 2>/dev/null || true)"
+  if [ "$status" = "*enabled" ]; then
+    echo "$dev" > /proc/acpi/wakeup
+  fi
+done

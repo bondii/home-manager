@@ -53,8 +53,8 @@ in
     }
 
     (lib.mkIf cfg.nixvim {
-      home.activation.createNvimUndoDir = lib.mkAfter ''
-        mkdir -p "${config.xdg.cacheHome}/nvim/undo"
+      home.activation.createNvimUndoDir = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        run ${pkgs.coreutils}/bin/mkdir -p "${config.xdg.cacheHome}/nvim/undo"
       '';
       home.sessionVariables.SUDO_EDITOR = "${config.home.homeDirectory}/.nix-profile/bin/nvim";
     })

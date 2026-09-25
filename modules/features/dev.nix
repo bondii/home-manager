@@ -89,15 +89,7 @@ lib.mkIf cfg.dev {
       USE_GKE_GCLOUD_AUTH_PLUGIN = "True";
     };
     activation.createNpmPrefix = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      mkdir -p "$HOME/.npm-packages/bin"
-    '';
-
-    activation.installOpenclaw = lib.hm.dag.entryAfter [ "createNpmPrefix" ] ''
-      export NPM_CONFIG_PREFIX="$HOME/.npm-packages"
-
-      if ! ${pkgs.nodejs}/bin/npm --prefix "$HOME/.npm-packages" list --global --depth=0 openclaw >/dev/null 2>&1; then
-        ${pkgs.nodejs}/bin/npm install --global --no-fund --no-audit openclaw@latest
-      fi
+      run ${pkgs.coreutils}/bin/mkdir -p "$HOME/.npm-packages/bin"
     '';
 
     file.".pgadmin/config_local.py".text = ''
