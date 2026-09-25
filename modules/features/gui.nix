@@ -14,16 +14,7 @@ let
       exec ${pkgs.nixgl.nixGLMesa}/bin/nixGLMesa ${bin} "$@"
     '';
 
-  lockPixel = pkgs.writeShellScriptBin "lock-pixel" ''
-    set -euo pipefail
-    down=40
-    up=$((10000 / down))
-    tmpbg="$(mktemp -p /run/user/$UID --suffix=.png)"
-    trap 'rm -f "$tmpbg"' EXIT
-
-    ${pkgs.maim}/bin/maim -u | ${pkgs.imagemagick}/bin/magick - -sample "$down%" -sample "$up%" PNG24:"$tmpbg"
-    /usr/bin/i3lock -n -i "$tmpbg"
-  '';
+  lockPixel = import ../../lib/lockPixel.nix { inherit pkgs; };
 
   emojiPicker = pkgs.writeShellScriptBin "emoji-picker" ''
     set -euo pipefail

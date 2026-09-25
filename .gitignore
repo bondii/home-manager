@@ -1,8 +1,8 @@
+__pycache__/
 .cache/
 .direnv/
 result
-
+result-*
 nixos.qcow2
-
 .codex/
 .claude/
