@@ -45,6 +45,13 @@ in
   features =
     assert featureChecks;
     pkgs.runCommand "check-features" { } ''touch "$out"'';
+  editor = pkgs.runCommand "check-editor" { nativeBuildInputs = [ pkgs.neovim-unwrapped ]; } ''
+    export HOME="$TMPDIR/home"
+    export NVIM_LOG_FILE="$TMPDIR/nvim.log"
+    mkdir -p "$HOME"
+    nvim --headless -u NONE -i NONE -l ${./test_nvim_lint.lua} ${../modules/programs/nvim/runtime.lua}
+    touch "$out"
+  '';
   activation = pkgs.runCommand "check-activation" { nativeBuildInputs = [ pkgs.python3 ]; } ''
     python ${./test_activation.py} ${customHooks} ${pkgs.bash}/bin/bash
     touch "$out"

@@ -34,7 +34,7 @@ Modular Home Manager configurations packaged as a Nix flake. It builds per‑use
 - Apply explicitly: `home-manager switch --flake '.#pontus@arch-desktop'`.
 
 CI evaluates both activation derivations and builds lightweight formatting, lint,
-feature, activation, locking, and helper checks. Full activation builds run
+feature, activation, locking, helper, and editor checks. Full activation builds run
 locally through `nix flake check`; CI does not download/build the entire desktop.
 The custom activation tests execute only the selected hook bodies in a dry-run
 harness, never the complete activation script against a live home.
