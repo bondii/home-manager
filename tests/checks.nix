@@ -15,6 +15,9 @@ let
     pkgs.lib.findFirst (
       p: pkgs.lib.getName p == name
     ) (throw "Missing helper ${name}") hostConfigs."pontus@arch-desktop".config.home.packages;
+  zshInit =
+    pkgs.writeText "zsh-init.zsh"
+      hostConfigs."pontus@arch-desktop".config.programs.zsh.initContent;
   customHooks = pkgs.writeText "custom-activation.json" (
     builtins.toJSON {
       inherit (activation) createNpmPrefix createNvimUndoDir;
@@ -29,11 +32,14 @@ in
       {
         nativeBuildInputs = [
           pkgs.python3
+          pkgs.zsh
+          pkgs.coreutils
           hostConfigs."pontus@arch-desktop".config.programs.git.package
         ];
       }
       ''
         python ${./test_helpers.py} ${helper "sf"}/bin/sf ${helper "sg"}/bin/sg ${helper "sfg"}/bin/sfg ${helper "opac-wt"}/bin/opac-wt
+        python ${./test_zsh_helpers.py} ${zshInit}
         touch "$out"
       '';
   features =

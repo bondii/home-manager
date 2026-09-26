@@ -47,25 +47,37 @@ in
     ''
     + lib.optionalString cfg.nixvim ''
       nva() {
-        local -a files
-        files=("''${(@f)$( {
-          git diff --name-only --cached --diff-filter=ACMRTUXB
-          git diff --name-only --diff-filter=ACMRTUXB
-          git ls-files -o --exclude-standard
-        } | sort -u)}")
-        (( $#files )) && nvim -- "''${files[@]}"
+        local -a files=()
+        local file
+        while IFS= read -r -d $'\0' file; do
+          files+=("$file")
+        done < <({
+          git diff -z --name-only --cached --diff-filter=ACMRTUXB
+          git diff -z --name-only --diff-filter=ACMRTUXB
+          git ls-files -z -o --exclude-standard
+        } | sort -zu)
+        (( $#files )) || return 0
+        nvim -- "''${files[@]}"
       }
 
       nvu() {
-        local -a files
-        files=("''${(@f)$(git diff --name-only --diff-filter=ACMRTUXB)}")
-        (( $#files )) && nvim -- "''${files[@]}"
+        local -a files=()
+        local file
+        while IFS= read -r -d $'\0' file; do
+          files+=("$file")
+        done < <(git diff -z --name-only --diff-filter=ACMRTUXB)
+        (( $#files )) || return 0
+        nvim -- "''${files[@]}"
       }
 
       nvs() {
-        local -a files
-        files=("''${(@f)$(git diff --cached --name-only --diff-filter=ACMRTUXB)}")
-        (( $#files )) && nvim -- "''${files[@]}"
+        local -a files=()
+        local file
+        while IFS= read -r -d $'\0' file; do
+          files+=("$file")
+        done < <(git diff -z --cached --name-only --diff-filter=ACMRTUXB)
+        (( $#files )) || return 0
+        nvim -- "''${files[@]}"
       }
     '';
   };
