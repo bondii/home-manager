@@ -15,4 +15,8 @@ jobs:
       - name: Evaluate both profiles and all checks
         run: nix flake check --no-build --no-update-lock-file
       - name: Build lightweight checks
-        run: nix build --no-link --no-update-lock-file .#checks.x86_64-linux.formatting .#checks.x86_64-linux.lint
+        run: >-
+          nix build --no-link --no-update-lock-file
+          .#checks.x86_64-linux.formatting .#checks.x86_64-linux.lint
+          .#checks.x86_64-linux.features .#checks.x86_64-linux.activation
+          .#checks.x86_64-linux.locking .#checks.x86_64-linux.helpers

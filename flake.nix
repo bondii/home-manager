@@ -38,6 +38,6 @@
           python3
         ];
       };
-      checks.${system} = import ./tests/checks.nix { inherit pkgs hostConfigs; };
+      checks.${system} = import ./tests/checks.nix { inherit pkgs hostConfigs mkHome; };
     };
 }
