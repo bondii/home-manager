@@ -4,9 +4,20 @@ set -uo pipefail
 locker="${LOCK_PIXEL_LOCKER:-/usr/bin/i3lock}"
 tmpbg=""
 locker_pid=""
+prep_pid=""
 sleep_lock_fd=""
 
+close_parent_sleep_fd() {
+  if [[ -n "$sleep_lock_fd" ]]; then
+    eval "exec ${sleep_lock_fd}>&-"
+    sleep_lock_fd=""
+  fi
+}
+
 cleanup() {
+  # A signal during preparation leaves the inhibitor in this wrapper. Close it
+  # before launching rm so no cleanup helper can inherit the descriptor.
+  close_parent_sleep_fd
   if [[ -n "$tmpbg" ]]; then
     rm -f -- "$tmpbg"
   fi
@@ -17,6 +28,10 @@ forward_signal() {
   local status="$2"
 
   trap - TERM INT
+  if [[ -n "$prep_pid" ]] && kill -0 "$prep_pid" 2>/dev/null; then
+    kill -s "$signal" "$prep_pid" 2>/dev/null || true
+    wait "$prep_pid" 2>/dev/null || true
+  fi
   if [[ -n "$locker_pid" ]] && kill -0 "$locker_pid" 2>/dev/null; then
     kill -s "$signal" "$locker_pid" 2>/dev/null || true
     wait "$locker_pid" 2>/dev/null || true
@@ -46,11 +61,19 @@ case "${XSS_SLEEP_LOCK_FD:-}" in
     ;;
 esac
 
-close_parent_sleep_fd() {
-  if [[ -n "$sleep_lock_fd" ]]; then
-    eval "exec ${sleep_lock_fd}>&-"
-    sleep_lock_fd=""
-  fi
+uptime_ms() {
+  local uptime seconds fraction
+  read -r uptime _ < /proc/uptime || return 1
+  seconds=${uptime%%.*}
+  fraction=${uptime#*.}000
+  now_ms=$((10#$seconds * 1000 + 10#${fraction:0:3}))
+}
+
+remaining_suspend_time() {
+  uptime_ms || return 1
+  local remaining_ms=$((suspend_deadline_ms - now_ms))
+  (( remaining_ms > 0 )) || return 1
+  printf -v remaining '%d.%03d' "$((remaining_ms / 1000))" "$((remaining_ms % 1000))"
 }
 
 run_locker() {
@@ -80,14 +103,61 @@ lock_solid() {
 runtime_dir="${XDG_RUNTIME_DIR:-/run/user/$UID}"
 umask 077
 
-if ! tmpbg="$(mktemp --tmpdir="$runtime_dir" lock-pixel.XXXXXX.png)"; then
-  lock_solid
-  exit $?
+if [[ -n "$sleep_lock_fd" ]]; then
+  # Keep one total preparation budget below logind's usual five-second limit.
+  # Only the wrapper holds the inhibitor during preparation. A subshell closes
+  # its copy before starting each helper (including timeout itself).
+  if ! uptime_ms; then
+    lock_solid
+    exit $?
+  fi
+  suspend_deadline_ms=$((now_ms + 2000))
+  if ! remaining_suspend_time; then
+    lock_solid
+    exit $?
+  fi
+  if ! tmpbg="$(close_parent_sleep_fd; timeout -k 0.2s "$remaining" mktemp --tmpdir="$runtime_dir" lock-pixel.XXXXXX.png)"; then
+    lock_solid
+    exit $?
+  fi
+else
+  if ! tmpbg="$(mktemp --tmpdir="$runtime_dir" lock-pixel.XXXXXX.png)"; then
+    lock_solid
+    exit $?
+  fi
 fi
 
 down=40
 up=$((10000 / down))
-if ! maim -u | magick - -sample "$down%" -sample "$up%" "PNG24:$tmpbg"; then
+if [[ -n "$sleep_lock_fd" ]]; then
+  if ! remaining_suspend_time; then
+    lock_solid
+    exit $?
+  fi
+  (
+    close_parent_sleep_fd
+    # Parameters expand in the nested bash.
+    # shellcheck disable=SC2016
+    exec timeout -k 0.2s "$remaining" bash -o pipefail -c \
+      'maim -u | magick - -sample "$1%" -sample "$2%" "PNG24:$3"' \
+      _ "$down" "$up" "$tmpbg"
+  ) &
+  prep_pid=$!
+  prep_status=0
+  wait "$prep_pid" || prep_status=$?
+  prep_pid=""
+  if (( prep_status != 0 )); then
+    lock_solid
+    exit $?
+  fi
+else
+  if ! maim -u | magick - -sample "$down%" -sample "$up%" "PNG24:$tmpbg"; then
+    lock_solid
+    exit $?
+  fi
+fi
+
+if [[ ! -s "$tmpbg" ]]; then
   lock_solid
   exit $?
 fi
