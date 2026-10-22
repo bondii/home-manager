@@ -108,4 +108,8 @@ assert contains desktop.pontus.gui.lockCommand
 assert contains desktop.pontus.gui.lockCommand
   desktop.systemd.user.services.xss-lock.Service.ExecStart;
 assert contains "--transfer-sleep-lock" desktop.systemd.user.services.xss-lock.Service.ExecStart;
+# assert !desktop.services.screen-locker.xautolock.enable;
+# assert desktop.services.screen-locker.inactiveInterval == 0;
+# assert !(desktop.systemd.user.services ? xautolock-session);
+# assert contains "xset s 0 " desktop.systemd.user.services.xss-lock.Service.ExecStartPre;
 true

@@ -228,6 +228,9 @@ in
       screen-locker = {
         enable = true;
         lockCmd = config.pontus.gui.lockCommand;
+        # Disable automatic idle locking; keep manual and suspend locking
+        # xautolock.enable = false;
+        # inactiveInterval = 0;
         inactiveInterval = 10;
         xss-lock.extraOptions = [ "--transfer-sleep-lock" ];
       };
