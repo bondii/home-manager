@@ -44,6 +44,15 @@ in
 
       # Autosuggestions: Accept with Ctrl+Space
       bindkey '^ ' autosuggest-accept
+
+      gcp_mcp_add() {
+        local name="$1" url="$2"
+        local token
+        token=$(gcloud auth application-default print-access-token)
+        claude mcp remove --scope user "$name" 2>/dev/null
+        claude mcp add-json --scope user "$name" \
+          "$(printf '{"type":"http","url":"%s","headers":{"Authorization":"Bearer %s","x-goog-user-project":"ship2shore-dev"}}' "$url" "$token")"
+      }
     ''
     + lib.optionalString cfg.nixvim ''
       nva() {
