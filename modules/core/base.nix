@@ -46,6 +46,8 @@ in
         direnv = {
           enable = true;
           nix-direnv.enable = true;
+          # Trust .envrc under the opac repos and their worktrees without `direnv allow`
+          config.whitelist.prefix = [ "/home/pontus/opac" ];
         };
       };
     }
