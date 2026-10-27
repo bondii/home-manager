@@ -64,13 +64,27 @@ lib.mkIf cfg.dev {
       #openssl
       # END rnd dev deps
 
-      (google-cloud-sdk.withExtraComponents [ google-cloud-sdk.components.gke-gcloud-auth-plugin ])
+      (google-cloud-sdk.withExtraComponents [
+        google-cloud-sdk.components.beta
+        google-cloud-sdk.components.gke-gcloud-auth-plugin
+      ])
       google-cloud-sql-proxy
       kubectl
-      (python314.withPackages (ps: with ps; [ pypdf ]))
+      (python314.withPackages (
+        ps: with ps; [
+          pypdf
+          pytest
+          alembic
+        ]
+      ))
+      poetry
       kubernetes-helm
       uv
-      redis
+      terraform
+      (azure-cli.withExtensions [ azure-cli.extensions.azure-devops ])
+      postgresql # psql
+      redis # redis-cli
+      influxdb2-cli # influx
 
     ]
     ++ lib.optionals cfg.gui [
