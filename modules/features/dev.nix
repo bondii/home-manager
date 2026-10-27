@@ -77,7 +77,6 @@ lib.mkIf cfg.dev {
           alembic
         ]
       ))
-      poetry
       kubernetes-helm
       uv
       terraform
