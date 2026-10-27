@@ -15,6 +15,9 @@
     #nixvim.url = "github:nix-community/nixvim/nixos-26.05";
     nixvim.url = "github:nix-community/nixvim";
     #nixvim.inputs.nixpkgs.follows = "nixpkgs";
+
+    # Pinned to the release whose Claude Code plugin hooks match this binary.
+    worktrunk.url = "github:max-sixty/worktrunk/v0.81.0";
   };
 
   outputs =

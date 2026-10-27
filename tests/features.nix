@@ -67,6 +67,9 @@ assert noEditor empty && noEditor off;
 assert on.programs.nixvim.enable && on.programs.zsh.shellAliases ? nv;
 assert lib.all (value: value) (builtins.attrValues desktop.pontus.features);
 assert ssh.pontus.features.dev && ssh.programs.nixvim.enable && !ssh.pontus.features.gui;
+assert builtins.elem "worktrunk" (names desktop) && builtins.elem "worktrunk" (names ssh);
+assert
+  !(builtins.elem "worktrunk" (names empty)) && !(empty.xdg.configFile ? "worktrunk/config.toml");
 assert absent ssh [
   "spotify"
   "pavucontrol"

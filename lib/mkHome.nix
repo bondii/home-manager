@@ -38,6 +38,7 @@ let
     ./../modules/programs/fzf.nix
     ./../modules/programs/starship.nix
     ./../modules/programs/yamllint.nix
+    ./../modules/programs/worktrunk.nix
     ./../modules/features/dev.nix
     ./../modules/features/gui.nix
     ./../modules/programs/firefox.nix
